@@ -18,7 +18,6 @@ import java.util.UUID;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -54,23 +53,15 @@ public class BluetoothController {
         bluetoothAdapter = manager.getAdapter();
         if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
             Observable
-                    .create(new Observable.OnSubscribe<Object>() {
-                        @Override
-                        public void call(Subscriber<? super Object> subscriber) {
-                            leScanner = bluetoothAdapter.getBluetoothLeScanner();
-                            leScanner.startScan(scanCallback);
-                            subscriber.onNext(null);
-                            subscriber.onCompleted();
-                        }
+                    .create((Subscriber<? super Object> subscriber) -> {
+                        leScanner = bluetoothAdapter.getBluetoothLeScanner();
+                        leScanner.startScan(scanCallback);
+                        subscriber.onNext(null);
+                        subscriber.onCompleted();
                     })
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Action1<Object>() {
-                        @Override
-                        public void call(Object o) {
-                            log("Start scanning");
-                        }
-                    });
+                    .subscribe((Object o) -> log("Start scanning"));
         }
     }
 
