@@ -3,8 +3,8 @@
 BTCounter TODO:
 
 Trasy:
-*  - pomiar prędkości (km/h, m/s)
-*  - pomiar kadencji (obr/min)
+* pomiar prędkości (km/h, m/s)
+* pomiar kadencji (obr/min)
 *  - sygnalizacja odbioru danych
 *  - dodanie trasy
 *  - wybor trasy
