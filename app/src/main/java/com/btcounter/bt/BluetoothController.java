@@ -26,12 +26,16 @@ import rx.schedulers.Schedulers;
  */
 public class BluetoothController {
 
+    private boolean DEBUG = false;
+
     private static final String BT_DEVICE_NAME = "BlunoV1.8";
     private static final String BT_SERVICE = "0000dfb0-0000-1000-8000-00805f9b34fb";
     private static final String BT_CHARACTERISTICS = "0000dfb1-0000-1000-8000-00805f9b34fb";
 
     public interface Listener {
         void log(String message);
+        void ready();
+        void onData(int value);
     }
 
     private Context context;
@@ -64,7 +68,7 @@ public class BluetoothController {
                     .subscribe(new Action1<Object>() {
                         @Override
                         public void call(Object o) {
-                            listener.log("Start scanning");
+                            log("Start scanning");
                         }
                     });
         }
@@ -73,13 +77,19 @@ public class BluetoothController {
     public void stopScan() {
         if (leScanner != null) {
             leScanner.stopScan(scanCallback);
-            listener.log("Stop scanning");
+            log("Stop scanning");
         }
     }
 
     public void closeGatt() {
         if (gatt != null) {
             gatt.close();
+        }
+    }
+
+    private void log(String message) {
+        if (DEBUG) {
+            listener.log(message);
         }
     }
 
@@ -103,7 +113,7 @@ public class BluetoothController {
                     message = "internal error";
                     break;
             }
-            listener.log("Scannig failed: " + message);
+            log("Scannig failed: " + message);
         }
 
         @Override
@@ -112,14 +122,14 @@ public class BluetoothController {
             if (result != null) {
                 BluetoothDevice device = result.getDevice();
                 if (device != null && device.getName() != null) {
-                    listener.log("Found: " + device.getName() + " (" + result.getRssi() + "dBm)");
+                    log("Found: " + device.getName() + " (" + result.getRssi() + "dBm)");
                     if (device.getName().equals(BT_DEVICE_NAME)) {
-                        listener.log("Connecting GATT to: " + device.getName());
+                        log("Connecting GATT to: " + device.getName());
                         gatt = device.connectGatt(context, false, gattCallback);
                         if (gatt != null) {
                             gatt.connect();
                         } else {
-                            listener.log("Failed to connect GATT");
+                            log("Failed to connect GATT");
                         }
                         stopScan();
                     }
@@ -134,10 +144,10 @@ public class BluetoothController {
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             super.onConnectionStateChange(gatt, status, newState);
             if (newState == BluetoothProfile.STATE_CONNECTING) {
-                listener.log("GATT is connecting");
+                log("GATT is connecting");
             }
             if (newState == BluetoothProfile.STATE_CONNECTED) {
-                listener.log("GATT is connected");
+                log("GATT is connected");
                 gatt.discoverServices();
             }
         }
@@ -146,14 +156,18 @@ public class BluetoothController {
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                listener.log("GATT is discovered");
+                log("GATT is discovered");
                 BluetoothGattService service = gatt.getService(UUID.fromString(BT_SERVICE));
                 if (service != null) {
                     BluetoothGattCharacteristic characteristic = service.getCharacteristic(UUID.fromString(BT_CHARACTERISTICS));
                     if (characteristic != null) {
-                        listener.log("GATT characteristic found");
-                        gatt.setCharacteristicNotification(characteristic, true);
-                        listener.log("GATT start read characteristic");
+                        log("GATT characteristic found");
+                        if (gatt.setCharacteristicNotification(characteristic, true)) {
+                            log("GATT set notification success");
+                            listener.ready();
+                        } else {
+                            log("GATT unable to set notification");
+                        }
                     }
                 }
             }
@@ -162,10 +176,8 @@ public class BluetoothController {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             super.onCharacteristicChanged(gatt, characteristic);
-
-            // TODO:
-            listener.log("GATT on characteristic changed read, dump " +
-                    characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT8, 0));
+            int value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT8, 0);
+            listener.onData(value);
         }
     };
 }

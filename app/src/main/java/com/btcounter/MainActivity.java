@@ -101,6 +101,16 @@ public class MainActivity extends Activity {
                     }
                 });
             }
+
+            @Override
+            public void ready() {
+                // TODO
+            }
+
+            @Override
+            public void onData(int value) {
+                // TODO
+            }
         });
         bluetoothController.startScan();
     }
