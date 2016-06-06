@@ -31,8 +31,6 @@ import android.widget.Toast;
 
 import java.util.UUID;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -154,13 +152,13 @@ public class TestActivity extends Activity {
         }
     };
 
-    @BindView(R.id.list)
+    //@BindView(R.id.list)
     ListView listView;
 
-    @BindView(R.id.button_start)
+    //@BindView(R.id.button_start)
     Button start;
 
-    @BindView(R.id.button_stop)
+    //@BindView(R.id.button_stop)
     Button stop;
 
     private BluetoothAdapter bluetoothAdapter;
@@ -172,7 +170,7 @@ public class TestActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        //ButterKnife.bind(this);
         listView.setAdapter(adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1));
 
 

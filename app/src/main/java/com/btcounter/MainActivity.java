@@ -16,9 +16,6 @@ import android.widget.Toast;
 
 import com.btcounter.bt.BluetoothController;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * Created by daba on 2016-06-01.
  */
@@ -26,14 +23,9 @@ public class MainActivity extends Activity {
 
     private static final int LOCATION_PERMISSION_RQUEST = 100;
 
-    @BindView(R.id.list)
-    ListView listView;
-
-    @BindView(R.id.button_start)
-    Button start;
-
-    @BindView(R.id.button_stop)
-    Button stop;
+    private ListView listView;
+    private Button start;
+    private Button stop;
 
     private BluetoothController bluetoothController;
     private ArrayAdapter<String> adapter;
@@ -42,7 +34,12 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        bindViews();
+
+        Runnable runnable = () -> {
+
+        };
+
         listView.setAdapter(adapter = new ArrayAdapter<>(this, R.layout.adapter_log));
 
         int permissionCheck = ContextCompat.checkSelfPermission(this,
@@ -78,6 +75,12 @@ public class MainActivity extends Activity {
                 finish();
             }
         }
+    }
+
+    private void bindViews() {
+        listView = (ListView)findViewById(R.id.list);
+        start = (Button) findViewById(R.id.button_start);
+        stop = (Button)findViewById(R.id.button_stop);
     }
 
     public void onStartClick(View view) {
