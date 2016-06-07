@@ -12,7 +12,10 @@ import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
+import android.support.annotation.IntDef;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.UUID;
 
 import rx.Observable;
@@ -25,6 +28,13 @@ import rx.schedulers.Schedulers;
  */
 public class BluetoothController {
 
+    public static final int DATA_COUNTER = 1;
+    public static final int DATA_CADENCE = 2;
+
+    @IntDef({DATA_COUNTER,DATA_CADENCE})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface DataType{}
+
     private boolean DEBUG = false;
 
     private static final String BT_DEVICE_NAME = "BlunoV1.8";
@@ -34,7 +44,7 @@ public class BluetoothController {
     public interface Listener {
         void log(String message);
         void ready();
-        void onData(int value);
+        void onData(@DataType int value);
     }
 
     private Context context;
@@ -43,8 +53,11 @@ public class BluetoothController {
     private BluetoothGatt gatt;
     private Listener listener;
 
-    public BluetoothController(Context context, Listener listener) {
+    public BluetoothController(Context context) {
         this.context = context;
+    }
+
+    public void setListener(Listener listener) {
         this.listener = listener;
     }
 
@@ -168,7 +181,14 @@ public class BluetoothController {
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             super.onCharacteristicChanged(gatt, characteristic);
             int value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT8, 0);
-            listener.onData(value);
+            switch (value) {
+                case 1:
+                    listener.onData(DATA_COUNTER);
+                    break;
+                case 2:
+                    listener.onData(DATA_CADENCE);
+                    break;
+            }
         }
     };
 }

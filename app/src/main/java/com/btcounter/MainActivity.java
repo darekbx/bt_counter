@@ -8,13 +8,20 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.btcounter.bikelogic.MeasurementController;
 import com.btcounter.bt.BluetoothController;
+import com.btcounter.view.StateLed;
+
+import static com.btcounter.bt.BluetoothController.DATA_COUNTER;
+import static com.btcounter.bt.BluetoothController.DATA_CADENCE;
 
 /**
  * Created by daba on 2016-06-01.
@@ -26,8 +33,12 @@ public class MainActivity extends Activity {
     private ListView listView;
     private Button start;
     private Button stop;
+    private StateLed speedStateLed;
+    private StateLed cadenceStateLed;
+    private TextView speedText;
 
     private BluetoothController bluetoothController;
+    private MeasurementController measurementController;
     private ArrayAdapter<String> adapter;
 
     @Override
@@ -36,11 +47,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         bindViews();
 
-        Runnable runnable = () -> {
-
-        };
-
         listView.setAdapter(adapter = new ArrayAdapter<>(this, R.layout.adapter_log));
+        speedText.setText(getString(R.string.speed_format, 0d));
 
         int permissionCheck = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
@@ -65,6 +73,16 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (bluetoothController != null) {
+            bluetoothController.stopScan();
+            bluetoothController.closeGatt();
+            bluetoothController.setListener(null);
+        }
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_RQUEST) {
@@ -81,6 +99,9 @@ public class MainActivity extends Activity {
         listView = (ListView)findViewById(R.id.list);
         start = (Button) findViewById(R.id.button_start);
         stop = (Button)findViewById(R.id.button_stop);
+        speedStateLed = (StateLed)findViewById(R.id.speed_state_led);
+        cadenceStateLed = (StateLed)findViewById(R.id.cadence_state_led);
+        speedText = (TextView) findViewById(R.id.text_speed);
     }
 
     public void onStartClick(View view) {
@@ -93,28 +114,52 @@ public class MainActivity extends Activity {
     }
 
     private void startScan() {
-        bluetoothController = new BluetoothController(this, new BluetoothController.Listener() {
+        bluetoothController = new BluetoothController(this);
+        bluetoothController.setListener(new BluetoothController.Listener() {
             @Override
             public void log(final String message) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.add(message);
-                        adapter.notifyDataSetChanged();
-                    }
+                runOnUiThread(() -> {
+                    adapter.add(message);
+                    adapter.notifyDataSetChanged();
                 });
             }
 
             @Override
             public void ready() {
-                // TODO
+                prepareMeasurement();
             }
 
             @Override
-            public void onData(int value) {
-                // TODO
+            public void onData(@BluetoothController.DataType int value) {
+                switch (value) {
+                    case DATA_COUNTER:
+                        speedStateLed.blink();
+                        if (measurementController != null) {
+                            measurementController.notifyWheelRotation();
+                        }
+                        break;
+                    case DATA_CADENCE:
+                        cadenceStateLed.blink();
+                        break;
+                }
             }
         });
         bluetoothController.startScan();
+    }
+
+    private void prepareMeasurement() {
+        measurementController = new MeasurementController();
+        measurementController.subscribeSpeed();
+        measurementController.setListener(new MeasurementController.Listener() {
+            @Override
+            public void refreshSpeed(double speed) {
+                runOnUiThread(() -> speedText.setText(getString(R.string.speed_format, speed)));
+            }
+
+            @Override
+            public void refreshCadence(int cadence) {
+
+            }
+        });
     }
 }

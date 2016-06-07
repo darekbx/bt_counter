@@ -10,16 +10,22 @@ import android.view.View;
 
 import com.btcounter.R;
 
+import java.util.concurrent.TimeUnit;
+
+import rx.Observable;
+
 /**
  * Created by daba on 2016-06-06.
  */
 public class StateLed extends View {
 
     private static final int BORDER = 4;
+    private static final int BLINK_DELAY = 50;
 
     private Paint paint;
     private int onColor;
     private int offColor;
+    private boolean isBlinking = false;
 
     public StateLed(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -33,15 +39,27 @@ public class StateLed extends View {
         paint.setAntiAlias(true);
     }
 
+    public void blink() {
+        isBlinking = true;
+        invalidate();
+        Observable
+                .just(1)
+                .delay(BLINK_DELAY, TimeUnit.MILLISECONDS)
+                .subscribe((a) -> {
+                    isBlinking = false;
+                    post(() -> invalidate());
+                });
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
         int size = getWidth() / 2;
-        //paint.setColor(Color.BLACK);
-        canvas.drawCircle(size, size, getWidth(), paint);
+        paint.setColor(Color.BLACK);
+        canvas.drawCircle(size, size, size, paint);
 
-        paint.setColor(onColor);
-        canvas.drawCircle(size, size, (size) - BORDER, paint);
+        paint.setColor(isBlinking ? onColor : offColor);
+        canvas.drawCircle(size, size, size - BORDER, paint);
     }
 }

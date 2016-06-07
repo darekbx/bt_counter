@@ -3,4 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="state_led_speed_on">#f0f0</color>
+    <color name="state_led_speed_off">#60f0</color>
+    <color name="state_led_cadence_on">#fff0</color>
+    <color name="state_led_cadence_off">#6ff0</color>
 </resources>

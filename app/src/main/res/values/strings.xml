@@ -3,5 +3,7 @@
 
     <string name="button_start">Start</string>
     <string name="button_stop">Stop</string>
+    <string name="unit_km_h">km/h</string>
+    <string name="speed_format">%2.1f</string>
 
 </resources>

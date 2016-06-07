@@ -1,24 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:auto="ttp://schemas.android.com/apk/res-auto"
+    xmlns:auto="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <com.btcounter.view.StateLed
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:id="@+id/cadence_state_led"
         android:layout_alignParentRight="true"
-        android:background="@android:color/transparent"
-        auto:on_color="#80c0"
-        auto:off_color="#0aaa"
+        auto:on_color="@color/state_led_speed_on"
+        auto:off_color="@color/state_led_speed_off"
+        style="@style/StateLedDefault"
+        />
+    <com.btcounter.view.StateLed
+        android:id="@+id/speed_state_led"
+        android:layout_toLeftOf="@id/cadence_state_led"
+        auto:on_color="@color/state_led_cadence_on"
+        auto:off_color="@color/state_led_cadence_off"
+        style="@style/StateLedDefault"
         />
 
+    <TextView
+        android:id="@+id/text_speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="72sp"
+        android:textColor="#000"
+        android:paddingTop="12dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="0dp"
+        android:layout_marginRight="0dp"
+        android:typeface="monospace"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_speed"
+        android:layout_alignEnd="@id/text_speed"
+        android:layout_marginTop="-8dp"
+        android:layout_marginRight="4dp"
+        android:typeface="monospace"
+        android:text="@string/unit_km_h"
+        android:textSize="18sp"
+        />
+
+    <ListView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true"
+        android:background="#1000"
+        />
     <Button
         android:id="@+id/button_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_above="@id/list"
         android:text="@string/button_start"
         android:onClick="onStartClick"
         />
@@ -26,17 +63,10 @@
         android:id="@+id/button_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_above="@id/list"
         android:layout_toRightOf="@id/button_start"
         android:text="@string/button_stop"
         android:onClick="onStopClick"
-        />
-    <ListView
-        android:id="@+id/list"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_alignParentBottom="true"
-        android:background="#1000"
         />
 
 

@@ -11,17 +11,17 @@ public class Measurement {
      * @param ticks ticks per second
      * @return Speed in m/s
      */
-    public double speed(int wheelSize, int ticks) {
-        return wheelSize * ticks;
+    public static double speed(int wheelSize, int ticks) {
+        return (wheelSize / 1000) * ticks;
     }
 
     /**
      * Covert speed in m/s to km/h
-     * @param speed in m/s
+     * @param speedMs in m/s
      * @return Speed in km/h
      */
-    public double speedToKmH(double speed) {
-        return speed * 60 * 60 / 1000;
+    public static double speedToKmH(double speedMs) {
+        return speedMs * 60 * 60 / 1000;
     }
 
     /**
@@ -29,7 +29,7 @@ public class Measurement {
      * @param ticks
      * @return Cadence
      */
-    public int cadence(int ticks, int minutes) {
+    public static int cadence(int ticks, int minutes) {
         return ticks / minutes;
     }
 }
