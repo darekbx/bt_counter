@@ -35,7 +35,7 @@ public class BluetoothController {
     @Retention(RetentionPolicy.SOURCE)
     public @interface DataType{}
 
-    private boolean DEBUG = false;
+    private boolean DEBUG = true;
 
     private static final String BT_DEVICE_NAME = "BlunoV1.8";
     private static final String BT_SERVICE = "0000dfb0-0000-1000-8000-00805f9b34fb";

@@ -121,6 +121,7 @@ public class MainActivity extends Activity {
                 runOnUiThread(() -> {
                     adapter.add(message);
                     adapter.notifyDataSetChanged();
+                    listView.setSelection(listView.getCount() - 1);
                 });
             }
 
