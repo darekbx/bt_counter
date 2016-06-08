@@ -1,24 +1,5 @@
 # README #
 
-
-```
-#!c#
-double tire_circumference = 2075;
-double revolutions = 1;
-
-// dystans ilosc tykniec * obwod kola
-double distance = tire_circumference * revolutions;
-
-// predkosc obwod kola dzielony przez czas miedzy tyknieciami 
-double last_interval = 0.812d; // czas jednego obrotu kola
-double ms = (tire_circumference / 1000) / (double)last_interval;
-
-double kmh = ms * 60 * 60;
-kmh /= 1000;
-```
-
-
-
 BTCounter TODO:
 
 
