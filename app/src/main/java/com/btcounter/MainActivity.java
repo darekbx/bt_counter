@@ -8,7 +8,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -62,7 +61,7 @@ public class MainActivity extends Activity {
             return;
         }
 
-        LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         boolean gpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
         if (!gpsEnabled) {
@@ -71,8 +70,6 @@ public class MainActivity extends Activity {
             Toast.makeText(this, "Please enable location", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        prepareMeasurement();
     }
 
     @Override
@@ -108,10 +105,17 @@ public class MainActivity extends Activity {
         distanceText = (TextView) findViewById(R.id.distance_text);
     }
 
-    public void onStartClick(View view) {
+    public void onPrepareClick(View view) {
+        prepareMeasurement();
+    }
+
+    public void onTickClick(View view) {
         speedStateLed.blink();
         measurementController.notifyWheelRotation();
-        //startScan();
+    }
+
+    public void onStartClick(View view) {
+        startScan();
     }
 
     public void onStopClick(View view) {

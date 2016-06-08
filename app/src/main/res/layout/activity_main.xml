@@ -80,5 +80,23 @@
         android:onClick="onStopClick"
         />
 
+    <Button
+        android:id="@+id/button_prepare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/button_start"
+        android:text="@string/button_prepare"
+        android:onClick="onPrepareClick"
+        />
+    <Button
+        android:id="@+id/button_tick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/button_stop"
+        android:layout_toRightOf="@id/button_start"
+        android:text="@string/button_tick"
+        android:onClick="onTickClick"
+        />
+
 
 </RelativeLayout>

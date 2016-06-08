@@ -3,6 +3,8 @@
 
     <string name="button_start">Start</string>
     <string name="button_stop">Stop</string>
+    <string name="button_prepare">Prepare</string>
+    <string name="button_tick">Tick</string>
     <string name="unit_km_h">km/h</string>
     <string name="speed_format" formatted="false">%02d.%01d</string>
     <string name="distance_format">%.3fkm</string>

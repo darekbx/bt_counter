@@ -2,6 +2,11 @@ package com.btcounter.bikelogic;
 
 import android.os.SystemClock;
 
+import java.util.concurrent.TimeUnit;
+
+import rx.Observable;
+import rx.Subscription;
+
 /**
  * Created by daba on 2016-06-07.
  */
@@ -13,15 +18,18 @@ public class MeasurementController {
         void refreshCadence(int cadence);
     }
 
-    public MeasurementController(double wheelSize) {
-        this.wheelSize = wheelSize;
-    }
+    private static final int CLEAN_DELAY = 2;
 
     private Listener listener;
+    private Subscription subscription;
 
     private double wheelSize;
     private double distance = 0;
     private long wheelRotationTime = 0;
+
+    public MeasurementController(double wheelSize) {
+        this.wheelSize = wheelSize;
+    }
 
     public void setListener(Listener listener) {
         this.listener = listener;
@@ -41,6 +49,20 @@ public class MeasurementController {
         }
         distance += Measurement.distanceToKilometers(wheelSize);
         listener.refreshDistance(distance);
+
+        delayedClean();
+    }
+
+    private void delayedClean() {
+        if (subscription != null) {
+            subscription.unsubscribe();
+        }
+        subscription = Observable
+                .just(0)
+                .delay(CLEAN_DELAY, TimeUnit.SECONDS)
+                .subscribe((a) -> {
+                    listener.refreshSpeed(0);
+                });
     }
 
     private long getTime() {
