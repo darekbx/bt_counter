@@ -55,6 +55,18 @@
         android:typeface="monospace"
         />
 
+    <TextView
+        android:id="@+id/cadence_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/distance_text"
+        android:layout_alignEnd="@id/text_speed"
+        android:layout_marginTop="10dp"
+        android:textSize="24sp"
+        android:textColor="#000"
+        android:typeface="monospace"
+        />
+
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
@@ -96,6 +108,15 @@
         android:layout_toRightOf="@id/button_start"
         android:text="@string/button_tick"
         android:onClick="onTickClick"
+        />
+    <Button
+        android:id="@+id/button_cadence"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/button_stop"
+        android:layout_toRightOf="@id/button_tick"
+        android:text="@string/button_cadence"
+        android:onClick="onCadenceTick"
         />
 
 

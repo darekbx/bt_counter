@@ -27,12 +27,13 @@ public class Measurement {
     }
 
     /**
-     * Get cadence ticks per minute
-     * @param ticks
+     * Get cadence crank rotations per minute
+     * @param interval in ms
      * @return Cadence
      */
-    public static int cadence(int ticks, int minutes) {
-        return ticks / minutes;
+    public static int cadence(long interval) {
+        final int minute = 60 * 1000;
+        return (int)(minute / interval);
     }
 
     /**

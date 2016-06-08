@@ -26,6 +26,7 @@ public class MeasurementController {
     private double wheelSize;
     private double distance = 0;
     private long wheelRotationTime = 0;
+    private long cranksRotationTime = 0;
 
     public MeasurementController(double wheelSize) {
         this.wheelSize = wheelSize;
@@ -53,6 +54,19 @@ public class MeasurementController {
         delayedClean();
     }
 
+    public void notifyCrankRotation() {
+        if (cranksRotationTime == 0) {
+            cranksRotationTime = getTime();
+        } else {
+            long currentTime = getTime();
+            long interval = currentTime - cranksRotationTime;
+            cranksRotationTime = currentTime;
+
+            int cadence = Measurement.cadence(interval);
+            listener.refreshCadence(cadence);
+        }
+    }
+
     private void delayedClean() {
         if (subscription != null) {
             subscription.unsubscribe();
@@ -62,6 +76,7 @@ public class MeasurementController {
                 .delay(CLEAN_DELAY, TimeUnit.SECONDS)
                 .subscribe((a) -> {
                     listener.refreshSpeed(0);
+                    listener.refreshCadence(0);
                 });
     }
 

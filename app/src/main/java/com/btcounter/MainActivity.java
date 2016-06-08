@@ -36,6 +36,7 @@ public class MainActivity extends Activity {
     private StateLed cadenceStateLed;
     private TextView speedText;
     private TextView distanceText;
+    private TextView cadenceText;
 
     private BluetoothController bluetoothController;
     private MeasurementController measurementController;
@@ -103,6 +104,7 @@ public class MainActivity extends Activity {
         cadenceStateLed = (StateLed)findViewById(R.id.cadence_state_led);
         speedText = (TextView) findViewById(R.id.text_speed);
         distanceText = (TextView) findViewById(R.id.distance_text);
+        cadenceText = (TextView) findViewById(R.id.cadence_text);
     }
 
     public void onPrepareClick(View view) {
@@ -112,6 +114,11 @@ public class MainActivity extends Activity {
     public void onTickClick(View view) {
         speedStateLed.blink();
         measurementController.notifyWheelRotation();
+    }
+
+    public void onCadenceTick(View view) {
+        cadenceStateLed.blink();
+        measurementController.notifyCrankRotation();
     }
 
     public void onStartClick(View view) {
@@ -151,6 +158,9 @@ public class MainActivity extends Activity {
                         break;
                     case DATA_CADENCE:
                         cadenceStateLed.blink();
+                        if (measurementController != null) {
+                            measurementController.notifyCrankRotation();
+                        }
                         break;
                 }
             }
@@ -174,7 +184,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void refreshCadence(int cadence) {
-
+                runOnUiThread(() -> cadenceText.setText(getString(R.string.cadence_format, cadence)));
             }
         });
     }
