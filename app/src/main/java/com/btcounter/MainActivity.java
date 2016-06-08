@@ -36,6 +36,7 @@ public class MainActivity extends Activity {
     private StateLed speedStateLed;
     private StateLed cadenceStateLed;
     private TextView speedText;
+    private TextView distanceText;
 
     private BluetoothController bluetoothController;
     private MeasurementController measurementController;
@@ -48,7 +49,7 @@ public class MainActivity extends Activity {
         bindViews();
 
         listView.setAdapter(adapter = new ArrayAdapter<>(this, R.layout.adapter_log));
-        speedText.setText(getString(R.string.speed_format, 0d));
+        speedText.setText(getString(R.string.speed_format, 0, 0));
 
         int permissionCheck = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
@@ -70,6 +71,8 @@ public class MainActivity extends Activity {
             Toast.makeText(this, "Please enable location", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        prepareMeasurement();
     }
 
     @Override
@@ -102,10 +105,13 @@ public class MainActivity extends Activity {
         speedStateLed = (StateLed)findViewById(R.id.speed_state_led);
         cadenceStateLed = (StateLed)findViewById(R.id.cadence_state_led);
         speedText = (TextView) findViewById(R.id.text_speed);
+        distanceText = (TextView) findViewById(R.id.distance_text);
     }
 
     public void onStartClick(View view) {
-        startScan();
+        speedStateLed.blink();
+        measurementController.notifyWheelRotation();
+        //startScan();
     }
 
     public void onStopClick(View view) {
@@ -149,12 +155,17 @@ public class MainActivity extends Activity {
     }
 
     private void prepareMeasurement() {
-        measurementController = new MeasurementController();
-        measurementController.subscribeSpeed();
+        measurementController = new MeasurementController(2075d);
         measurementController.setListener(new MeasurementController.Listener() {
             @Override
             public void refreshSpeed(double speed) {
-                runOnUiThread(() -> speedText.setText(getString(R.string.speed_format, speed)));
+                int speedMod = (int)((speed - (int)speed) * 10);
+                runOnUiThread(() -> speedText.setText(getString(R.string.speed_format, (int)speed, speedMod)));
+            }
+
+            @Override
+            public void refreshDistance(double distance) {
+                runOnUiThread(() -> distanceText.setText(getString(R.string.distance_format, distance)));
             }
 
             @Override

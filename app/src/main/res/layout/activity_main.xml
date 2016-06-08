@@ -44,6 +44,17 @@
         android:textSize="18sp"
         />
 
+    <TextView
+        android:id="@+id/distance_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_speed"
+        android:layout_alignEnd="@id/text_speed"
+        android:layout_marginTop="10dp"
+        android:textSize="24sp"
+        android:typeface="monospace"
+        />
+
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"

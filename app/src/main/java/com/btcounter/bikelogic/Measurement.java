@@ -8,11 +8,13 @@ public class Measurement {
     /**
      * Calculate speed
      * @param wheelSize Wheel size in mm (WS)
-     * @param ticks ticks per second
+     * @param interval in milliseconds
      * @return Speed in m/s
      */
-    public static double speed(int wheelSize, int ticks) {
-        return (wheelSize / 1000) * ticks;
+    public static double speed(double wheelSize, double interval) {
+        double wheelSizeMeters = wheelSize / 1000d;
+        double intervalSeconds = interval / 1000d;
+        return wheelSizeMeters / intervalSeconds;
     }
 
     /**
@@ -31,5 +33,14 @@ public class Measurement {
      */
     public static int cadence(int ticks, int minutes) {
         return ticks / minutes;
+    }
+
+    /**
+     * Convert distaince in mm to km
+     * @param distance in mm
+     * @return distance in km
+     */
+    public static double distanceToKilometers(double distance) {
+        return distance / 1000d / 1000d;
     }
 }
