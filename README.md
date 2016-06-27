@@ -7,9 +7,6 @@ BTCounter TODO:
 #!java
 
 Trasy:
-- pomiar prędkości (km/h, m/s)
-- pomiar kadencji (obr/min)
-- sygnalizacja odbioru danych
 - dodanie trasy
 - wybór trasy
 - punkty trasy:
