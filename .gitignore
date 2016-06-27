@@ -1,0 +1,18 @@
+# gradle files
+.gradle
+build/
+
+# intelliJ specific local files
+.idea/
+*.iml
+/out/
+/captures/
+
+# ant build files
+local.properties
+bin/
+
+# other
+gen/
+proguard-project.txt
+.DS_Store
