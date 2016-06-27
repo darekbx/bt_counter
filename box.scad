@@ -23,14 +23,16 @@ heightInside = height - (2 * thickness);
 module box() {
     difference() {
         cube([width, height, depth], false);
-        translate([thickness, thickness, -thickness]) 
+        translate([thickness, thickness, -thickness]) {
             cube([widthInside, heightInside, depth], false);
+        }
     }
 }
 
 module hole(x, y, z) {
-    translate([x, y, z])
+    translate([x, y, z]) {
         cylinder(holeHeigth, holeRadius, holeRadius, false);
+    }
 }
 
 module holes(bottomOffset) {
@@ -43,13 +45,15 @@ module holes(bottomOffset) {
 module cover() {
     translate([0, 0, coverOffset]) {
         cube([width, height, coverThickness], false);
-        translate([thickness, thickness, coverThickness])
+        translate([thickness, thickness, coverThickness]) {
             cube([widthInside, heightInside, coverDepth], false);
+        }
     }
 }
 
 module ledHoles() {
-    translate([ledXPosition, thickness + 1, depth / 2]) {
+    halfDepth = depth / 2;
+    translate([ledXPosition, thickness + 1, halfDepth]) {
         rotate([90, 0, 0]) {
             heigth = thickness + 2;
             cylinder(heigth, ledRadius, ledRadius, false);
@@ -61,7 +65,8 @@ module ledHoles() {
 }
 
 module switchHole() {
-    translate([switchXPosition, thickness + 1, depth / 2]) {
+    halfDepth = depth / 2;
+    translate([switchXPosition, thickness + 1, halfDepth]) {
         rotate([90, 0, 0]) {
             heigth = thickness + 2;
             cylinder(heigth, switchRadius, switchRadius, false);
@@ -69,16 +74,17 @@ module switchHole() {
     }
 }
 
-translate([-width/2, -height/2, -depth]) {
-    difference() {
-        box();
-        holes(bottomHoleOffset);
-        ledHoles();
-        switchHole();
-    }
-    
-    difference() {
-        cover();
-        holes(coverOffset);
+rotate([0, 180, 0]) {
+    translate([-width/2, -height/2, -depth]) {
+        difference() {
+            box();
+            holes(bottomHoleOffset);
+            ledHoles();
+            switchHole();
+        }
+        difference() {
+            cover();
+            holes(coverOffset);
+        }
     }
 }
