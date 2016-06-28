@@ -3,7 +3,7 @@ profile = 0;
 // sizes in mm
 width = 80;
 height = 60;
-depth = 30; 
+depth = 24; 
 thickness = 3;
 coverThickness = 2;
 coverDepth = 1;
@@ -37,7 +37,7 @@ module box() {
 
 module hole(x, y, z) {
     translate([x, y, z]) {
-        cylinder(holeHeigth, holeRadius, holeRadius, false);
+        cylinder(holeHeigth, holeRadius, holeRadius,$fn=20, false);
     }
 }
 
@@ -80,9 +80,9 @@ module ledHoles() {
     translate([ledXPosition, thickness + 1, halfDepth]) {
         rotate([90, 0, 0]) {
             heigth = thickness + 2;
-            cylinder(heigth, ledRadius, ledRadius, false);
+            cylinder(heigth, ledRadius, ledRadius,$fn=20, false);
             translate([15, 0 ,0]) {
-                cylinder(heigth, ledRadius, ledRadius, false);
+                cylinder(heigth, ledRadius, ledRadius,$fn=20, false);
             }
         }
     }
@@ -93,7 +93,7 @@ module switchHole() {
     translate([switchXPosition, thickness + 1, halfDepth]) {
         rotate([90, 0, 0]) {
             heigth = thickness + 2;
-            cylinder(heigth, switchRadius, switchRadius, false);
+            cylinder(heigth, switchRadius, switchRadius,$fn=20, false);
         }
     }
 }
@@ -104,18 +104,29 @@ module mount(x) {
             cube([mounthDepth, mountWidth, mountHeigth], false);
             translate([0, (mountWidth - 4) / 2, 3]) {
                 cube([mounthDepth, 4, 3], false);
-            }            
+            }
         }
     }
 }
 
 module verticalMount() {
-    translate([(width - mounthDepth) / 2, height - 1, 16]) {
+    translate([(width - mounthDepth) / 2, height - 1, (depth - mountWidth)]) {
             difference() {
             cube([mounthDepth, mountHeigth, mountWidth], false);
             translate([0, 4, (mountWidth - 4) / 2]) {
                 cube([mounthDepth, 3, 4], false);
             }
+        }
+    }
+}
+
+module sensorHoles() {
+    translate([width - 3, (height - 1) / 2 - 1, 0]) {
+        cube([3, 2, 5], false);
+    }
+    translate([thickness, (height - 1) / 2, 5]) {
+        rotate([0, 90, 0]) {
+            cylinder(width, 1, 1,$fn=20, false);
         }
     }
 }
@@ -126,6 +137,7 @@ module model() {
         holes(bottomHoleOffset);
         ledHoles();
         switchHole();
+        sensorHoles();
     }
     
     holeBoxes();
