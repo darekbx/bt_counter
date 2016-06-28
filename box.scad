@@ -10,6 +10,10 @@ coverDepth = 1;
 coverOffset = 0;
 holeRadius = 2;
 
+mountWidth = 14;
+mountHeigth = 10;
+mounthDepth = 5;
+
 controlsOffset = 20;
 ledRadius = 2.5;
 ledXPosition = controlsOffset;
@@ -95,15 +99,23 @@ module switchHole() {
 }
 
 module mount(x) {
-    mountWidth = 18;
-    mountHeigth = 10;
-    mounthDepth = 5;
     translate([x, (height - mountWidth) / 2, -(coverOffset + mountHeigth - 1)]) {
         difference() {
             cube([mounthDepth, mountWidth, mountHeigth], false);
             translate([0, (mountWidth - 4) / 2, 3]) {
                 cube([mounthDepth, 4, 3], false);
             }            
+        }
+    }
+}
+
+module verticalMount() {
+    translate([(width - mounthDepth) / 2, height - 1, 16]) {
+            difference() {
+            cube([mounthDepth, mountHeigth, mountWidth], false);
+            translate([0, 4, (mountWidth - 4) / 2]) {
+                cube([mounthDepth, 3, 4], false);
+            }
         }
     }
 }
@@ -117,10 +129,11 @@ module model() {
     }
     
     holeBoxes();
+    verticalMount();
     
     translation = profile == 1 
         ? [0, 0, -4] 
-        : [0, 70, depth - thickness];
+        : [0, 72, depth - thickness];
     
     translate(translation) {
         difference() {
@@ -138,7 +151,7 @@ rotate([0, 180, 0]) {
             model();
             if (profile == 1) {
                 translate([0, height / 2, -30]) {
-                    cube([width, height, 60], false);
+                    cube([width / 2, height, 60], false);
                 }
             }
         }
