@@ -1,3 +1,5 @@
+include <text_generator.scad>;
+
 profile = 0;
 
 // sizes in mm
@@ -11,7 +13,7 @@ coverOffset = 0;
 holeRadius = 2;
 
 mountWidth = 14;
-mountHeigth = 10;
+mountHeigth = 6;
 mounthDepth = 5;
 
 controlsOffset = 20;
@@ -99,34 +101,43 @@ module switchHole() {
 }
 
 module mount(x) {
-    translate([x, (height - mountWidth) / 2, -(coverOffset + mountHeigth - 1)]) {
+    translate([(width - mountWidth) / 2, x, -(coverOffset + mountHeigth - 1)]) {
+            difference() {
+                cube([mountWidth, mounthDepth, mountHeigth], false);
+                translate([(mountWidth - 4) / 2, 0, 3]) {
+                    cube([4, mounthDepth, 2], false);
+                }
+            }
+    }
+}
+
+module verticalMount(y) {
+    translate([width - 1, y, depth - mounthDepth]) {
         difference() {
-            cube([mounthDepth, mountWidth, mountHeigth], false);
-            translate([0, (mountWidth - 4) / 2, 3]) {
-                cube([mounthDepth, 4, 3], false);
+            cube([mountHeigth, mountWidth, mounthDepth], false);
+            translate([1, (mountWidth - 4) / 2, 0]) {
+                cube([2, 4, mounthDepth], false);
             }
         }
     }
 }
 
-module verticalMount() {
-    translate([(width - mounthDepth) / 2, height - 1, (depth - mountWidth)]) {
-            difference() {
-            cube([mounthDepth, mountHeigth, mountWidth], false);
-            translate([0, 4, (mountWidth - 4) / 2]) {
-                cube([mounthDepth, 3, 4], false);
-            }
+module logo() {
+    rotate([90, 180, -90]) {
+        translate([21.5, -15, -1]) {
+            scale([1,1,1]) drawtext("BTC");
         }
     }
 }
 
 module sensorHoles() {
-    translate([width - 3, (height - 1) / 2 - 1, 0]) {
-        cube([3, 2, 5], false);
+    holeSize = 3;
+    translate([width - 3, (height - 1) / 2 - holeSize/2, 0]) {
+        cube([3, holeSize, 5], false);
     }
     translate([thickness, (height - 1) / 2, 5]) {
         rotate([0, 90, 0]) {
-            cylinder(width, 1, 1,$fn=20, false);
+            cylinder(width, holeSize/2, holeSize/2,$fn=20, false);
         }
     }
 }
@@ -138,10 +149,12 @@ module model() {
         ledHoles();
         switchHole();
         sensorHoles();
+        logo();
     }
     
     holeBoxes();
-    verticalMount();
+    verticalMount(0);
+    verticalMount(height - mountWidth);
     
     translation = profile == 1 
         ? [0, 0, -4] 
@@ -152,8 +165,8 @@ module model() {
             cover();
             holes(coverOffset);
         }
-        mount(18);
-        mount(57);
+        mount(15);
+        mount(40);
     }
 }
 
