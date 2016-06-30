@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
@@ -27,6 +28,7 @@ import static com.btcounter.bt.BluetoothController.DATA_CADENCE;
  */
 public class MainActivity extends Activity {
 
+    private static final String TAG = MainActivity.class.getName();
     private static final int LOCATION_PERMISSION_RQUEST = 100;
 
     private ListView listView;
@@ -41,6 +43,7 @@ public class MainActivity extends Activity {
     private BluetoothController bluetoothController;
     private MeasurementController measurementController;
     private ArrayAdapter<String> adapter;
+    private PowerManager.WakeLock wakeLock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +74,8 @@ public class MainActivity extends Activity {
             Toast.makeText(this, "Please enable location", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        keepScreenOnAndDim();
     }
 
     @Override
@@ -94,6 +99,23 @@ public class MainActivity extends Activity {
                 finish();
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        wakeLock.acquire();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        wakeLock.release();
+    }
+
+    private void keepScreenOnAndDim() {
+        PowerManager powerManager = (PowerManager)getSystemService(POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, TAG);
     }
 
     private void bindViews() {
