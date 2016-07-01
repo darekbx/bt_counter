@@ -1,11 +1,12 @@
 include <text_generator.scad>;
 
 profile = 0;
+showComponents = 0;
 
 // sizes in mm
 width = 80;
-height = 60;
-depth = 24; 
+height = 80;
+depth = 30; 
 thickness = 3;
 coverThickness = 2;
 coverDepth = 1;
@@ -17,7 +18,7 @@ mountHeigth = 6;
 mounthDepth = 5;
 
 controlsOffset = 20;
-ledRadius = 2.5;
+ledRadius = 4;//2.5;
 ledXPosition = controlsOffset;
 switchRadius = 3;
 switchXPosition = width - controlsOffset;
@@ -102,12 +103,12 @@ module switchHole() {
 
 module mount(x) {
     translate([(width - mountWidth) / 2, x, -(coverOffset + mountHeigth - 1)]) {
-            difference() {
-                cube([mountWidth, mounthDepth, mountHeigth], false);
-                translate([(mountWidth - 4) / 2, 0, 3]) {
-                    cube([4, mounthDepth, 2], false);
-                }
+        difference() {
+            cube([mountWidth, mounthDepth, mountHeigth], false);
+            translate([(mountWidth - 4) / 2, 0, 3]) {
+                cube([4, mounthDepth, 2], false);
             }
+        }
     }
 }
 
@@ -124,7 +125,7 @@ module verticalMount(y) {
 
 module logo() {
     rotate([90, 180, -90]) {
-        translate([21.5, -15, -1]) {
+        translate([31.5, -15, -1]) {
             scale([1,1,1]) drawtext("BTC");
         }
     }
@@ -142,6 +143,23 @@ module sensorHoles() {
     }
 }
 
+module batteryHolder() {
+  translate([0, height - 33, depth - 22]) {
+        cube([width, 3, 20]);
+  }  
+}
+
+module components() {
+    // battery box 55x25x25
+    translate([12.5, height - 29, 1]) {
+        cube([55, 25, 25]);
+    }
+    // bluno 5x30x34
+    translate([10, 10, 24]) {
+        cube([34, 30, 5]);
+    }
+}
+
 module model() {
     difference() {
         box();
@@ -155,18 +173,23 @@ module model() {
     holeBoxes();
     verticalMount(0);
     verticalMount(height - mountWidth);
+    batteryHolder();
     
     translation = profile == 1 
         ? [0, 0, -4] 
-        : [0, 72, depth - thickness];
+        : [0, 82, depth - thickness];
     
     translate(translation) {
         difference() {
             cover();
             holes(coverOffset);
         }
-        mount(15);
-        mount(40);
+        mount(25);
+        mount(50);
+    }
+    
+    if (showComponents == 1) {
+        components();
     }
 }
 
@@ -175,7 +198,7 @@ rotate([0, 180, 0]) {
         difference() {
             model();
             if (profile == 1) {
-                translate([0, height / 2, -30]) {
+                translate([0, height / 2, -(depth - 10)]) {
                     cube([width / 2, height, 60], false);
                 }
             }
