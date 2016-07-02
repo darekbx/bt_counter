@@ -4,8 +4,8 @@ profile = 0;
 showComponents = 0;
 
 // sizes in mm
-width = 80;
-height = 80;
+width = 74;
+height = 76;
 depth = 30; 
 thickness = 3;
 coverThickness = 2;
@@ -16,6 +16,9 @@ holeRadius = 2;
 mountWidth = 14;
 mountHeigth = 6;
 mounthDepth = 5;
+
+batteryHolderWidth = 55;
+batteryHolderSize = 25;
 
 controlsOffset = 20;
 ledRadius = 4;//2.5;
@@ -84,9 +87,6 @@ module ledHoles() {
         rotate([90, 0, 0]) {
             heigth = thickness + 2;
             cylinder(heigth, ledRadius, ledRadius,$fn=20, false);
-            translate([15, 0 ,0]) {
-                cylinder(heigth, ledRadius, ledRadius,$fn=20, false);
-            }
         }
     }
 }
@@ -133,10 +133,11 @@ module logo() {
 
 module sensorHoles() {
     holeSize = 3;
-    translate([width - 3, (height - 1) / 2 - holeSize/2, 0]) {
+    holeDistance = 30;
+    translate([width - 3, holeDistance - holeSize/2, 0]) {
         cube([3, holeSize, 5], false);
     }
-    translate([thickness, (height - 1) / 2, 5]) {
+    translate([thickness, holeDistance, 5]) {
         rotate([0, 90, 0]) {
             cylinder(width, holeSize/2, holeSize/2,$fn=20, false);
         }
@@ -144,15 +145,15 @@ module sensorHoles() {
 }
 
 module batteryHolder() {
-  translate([0, height - 33, depth - 22]) {
-        cube([width, 3, 20]);
-  }  
+    translate([2, height - 32, depth - 22]) {
+        cube([width - 4, 3, 20]);
+    }  
 }
 
 module components() {
     // battery box 55x25x25
-    translate([12.5, height - 29, 1]) {
-        cube([55, 25, 25]);
+    translate([9.5, height - 28.5, 1]) {
+        cube([batteryHolderWidth, batteryHolderSize, batteryHolderSize]);
     }
     // bluno 5x30x34
     translate([10, 10, 24]) {
@@ -177,15 +178,15 @@ module model() {
     
     translation = profile == 1 
         ? [0, 0, -4] 
-        : [0, 82, depth - thickness];
+        : [0, 78, depth - thickness];
     
     translate(translation) {
         difference() {
             cover();
             holes(coverOffset);
         }
-        mount(25);
-        mount(50);
+        mount(24);
+        mount(49);
     }
     
     if (showComponents == 1) {
