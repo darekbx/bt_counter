@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -152,16 +153,22 @@ public class MainActivity extends Activity {
         bluetoothController.closeGatt();
     }
 
+    int counter = 0;
+
+    void addLog(String message) {
+        runOnUiThread(() -> {
+            adapter.add(message);
+            adapter.notifyDataSetChanged();
+            listView.setSelection(listView.getCount() - 1);
+        });
+    }
+
     private void startScan() {
         bluetoothController = new BluetoothController(this);
         bluetoothController.setListener(new BluetoothController.Listener() {
             @Override
             public void log(final String message) {
-                runOnUiThread(() -> {
-                    adapter.add(message);
-                    adapter.notifyDataSetChanged();
-                    listView.setSelection(listView.getCount() - 1);
-                });
+                addLog(message);
             }
 
             @Override
@@ -173,13 +180,15 @@ public class MainActivity extends Activity {
             public void onData(@BluetoothController.DataType int value) {
                 switch (value) {
                     case DATA_COUNTER:
-                        speedStateLed.blink();
+                        counter++;
+                        runOnUiThread(() ->  cadenceText.setText("Counter: " + counter));
+                        runOnUiThread(() -> speedStateLed.blink());
                         if (measurementController != null) {
                             measurementController.notifyWheelRotation();
                         }
                         break;
                     case DATA_CADENCE:
-                        cadenceStateLed.blink();
+                        runOnUiThread(() -> cadenceStateLed.blink());
                         if (measurementController != null) {
                             measurementController.notifyCrankRotation();
                         }
@@ -194,19 +203,22 @@ public class MainActivity extends Activity {
         measurementController = new MeasurementController(2075d);
         measurementController.setListener(new MeasurementController.Listener() {
             @Override
-            public void refreshSpeed(double speed) {
+            public void refreshSpeed(double speed, long interval) {
                 int speedMod = (int)((speed - (int)speed) * 10);
+
+                runOnUiThread(() -> distanceText.setText("Time: "+interval));
+
                 runOnUiThread(() -> speedText.setText(getString(R.string.speed_format, (int)speed, speedMod)));
             }
 
             @Override
             public void refreshDistance(double distance) {
-                runOnUiThread(() -> distanceText.setText(getString(R.string.distance_format, distance)));
+                //runOnUiThread(() -> distanceText.setText(getString(R.string.distance_format, distance)));
             }
 
             @Override
             public void refreshCadence(int cadence) {
-                runOnUiThread(() -> cadenceText.setText(getString(R.string.cadence_format, cadence)));
+                //runOnUiThread(() -> cadenceText.setText(getString(R.string.cadence_format, cadence)));
             }
         });
     }

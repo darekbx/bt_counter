@@ -13,7 +13,7 @@ import rx.Subscription;
 public class MeasurementController {
 
     public interface Listener {
-        void refreshSpeed(double speed);
+        void refreshSpeed(double speed, long interval);
         void refreshDistance(double distance);
         void refreshCadence(int cadence);
     }
@@ -46,7 +46,7 @@ public class MeasurementController {
 
             double speedMs = Measurement.speed(wheelSize, interval);
             double speedKmH = Measurement.speedToKmH(speedMs);
-            listener.refreshSpeed(speedKmH);
+            listener.refreshSpeed(speedKmH, interval);
         }
         distance += Measurement.distanceToKilometers(wheelSize);
         listener.refreshDistance(distance);
@@ -75,7 +75,7 @@ public class MeasurementController {
                 .just(0)
                 .delay(CLEAN_DELAY, TimeUnit.SECONDS)
                 .subscribe((a) -> {
-                    listener.refreshSpeed(0);
+                    listener.refreshSpeed(0, 0);
                     listener.refreshCadence(0);
                 });
     }

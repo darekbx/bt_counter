@@ -180,7 +180,7 @@ public class BluetoothController {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             super.onCharacteristicChanged(gatt, characteristic);
-            int value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT8, 0);
+            int value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT8, 0);//
             switch (value) {
                 case 1:
                     listener.onData(DATA_COUNTER);
