@@ -12,6 +12,7 @@ import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
+import android.util.Log;
 
 import java.util.UUID;
 
@@ -172,13 +173,13 @@ public class BluetoothController {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             super.onCharacteristicChanged(gatt, characteristic);
-            int value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT16, 0);
-            switch (value) {
+            float value = characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT, 0);
+            switch ((int)value) {
                 case 2:
                     listener.onData(DATA_CADENCE);
                     break;
                 default:
-                    listener.onData(value);
+                    listener.onData((int)value);
                     break;
             }
         }

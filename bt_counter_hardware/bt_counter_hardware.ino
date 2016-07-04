@@ -29,13 +29,22 @@ void handleCounter() {
   int counterButtonState = digitalRead(counterPin);
   if (counterButtonState == HIGH && !isCounterHigh) {
     isCounterHigh = true;
-    long diff = calculateDiff();
-    Serial.write(diff);
+    unsigned long diff = calculateDiff();
+    writeBytes(diff);
     digitalWrite(stateLed, HIGH);
   } else if (isCounterHigh && counterButtonState == LOW) {
     isCounterHigh = false;
     digitalWrite(stateLed, LOW);
   }
+}
+
+void writeBytes(long value) {
+  byte buf[4];
+  buf[0] = value & 255;
+  buf[1] = (value >> 8)  & 255;
+  buf[2] = (value >> 16) & 255;
+  buf[3] = (value >> 24) & 255;
+  Serial.write(buf, sizeof(buf));
 }
 
 long calculateDiff() {
