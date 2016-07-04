@@ -12,10 +12,7 @@ import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
-import android.support.annotation.IntDef;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.UUID;
 
 import rx.Observable;
@@ -28,12 +25,7 @@ import rx.schedulers.Schedulers;
  */
 public class BluetoothController {
 
-    public static final int DATA_COUNTER = 1;
     public static final int DATA_CADENCE = 2;
-
-    @IntDef({DATA_COUNTER,DATA_CADENCE})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface DataType{}
 
     private boolean DEBUG = true;
 
@@ -44,7 +36,7 @@ public class BluetoothController {
     public interface Listener {
         void log(String message);
         void ready();
-        void onData(@DataType int value);
+        void onData(int value);
     }
 
     private Context context;
@@ -180,13 +172,13 @@ public class BluetoothController {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             super.onCharacteristicChanged(gatt, characteristic);
-            int value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT8, 0);//
+            int value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT16, 0);
             switch (value) {
-                case 1:
-                    listener.onData(DATA_COUNTER);
-                    break;
                 case 2:
                     listener.onData(DATA_CADENCE);
+                    break;
+                default:
+                    listener.onData(value);
                     break;
             }
         }

@@ -44,4 +44,8 @@ public class Measurement {
     public static double distanceToKilometers(double distance) {
         return distance / 1000d / 1000d;
     }
+
+    public static int doubleModulo(double value) {
+        return (int)((value - (int)value) * 10);
+    }
 }

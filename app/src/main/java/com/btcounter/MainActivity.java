@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -17,11 +16,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.btcounter.bikelogic.Measurement;
 import com.btcounter.bikelogic.MeasurementController;
 import com.btcounter.bt.BluetoothController;
 import com.btcounter.view.StateLed;
 
-import static com.btcounter.bt.BluetoothController.DATA_COUNTER;
 import static com.btcounter.bt.BluetoothController.DATA_CADENCE;
 
 /**
@@ -31,6 +30,8 @@ public class MainActivity extends Activity {
 
     private static final String TAG = MainActivity.class.getName();
     private static final int LOCATION_PERMISSION_RQUEST = 100;
+
+    private static final double MOCK_WHEEL_DIAMETER = 2075d;
 
     private ListView listView;
     private Button start;
@@ -105,13 +106,17 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        wakeLock.acquire();
+        if (wakeLock != null) {
+            wakeLock.acquire();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        wakeLock.release();
+        if (wakeLock != null) {
+            wakeLock.release();
+        }
     }
 
     private void keepScreenOnAndDim() {
@@ -136,7 +141,7 @@ public class MainActivity extends Activity {
 
     public void onTickClick(View view) {
         speedStateLed.blink();
-        measurementController.notifyWheelRotation();
+        measurementController.notifyWheelRotationTime(1000);
     }
 
     public void onCadenceTick(View view) {
@@ -153,16 +158,6 @@ public class MainActivity extends Activity {
         bluetoothController.closeGatt();
     }
 
-    int counter = 0;
-
-    void addLog(String message) {
-        runOnUiThread(() -> {
-            adapter.add(message);
-            adapter.notifyDataSetChanged();
-            listView.setSelection(listView.getCount() - 1);
-        });
-    }
-
     private void startScan() {
         bluetoothController = new BluetoothController(this);
         bluetoothController.setListener(new BluetoothController.Listener() {
@@ -177,20 +172,18 @@ public class MainActivity extends Activity {
             }
 
             @Override
-            public void onData(@BluetoothController.DataType int value) {
+            public void onData(int value) {
                 switch (value) {
-                    case DATA_COUNTER:
-                        counter++;
-                        runOnUiThread(() ->  cadenceText.setText("Counter: " + counter));
-                        runOnUiThread(() -> speedStateLed.blink());
-                        if (measurementController != null) {
-                            measurementController.notifyWheelRotation();
-                        }
-                        break;
                     case DATA_CADENCE:
                         runOnUiThread(() -> cadenceStateLed.blink());
                         if (measurementController != null) {
                             measurementController.notifyCrankRotation();
+                        }
+                        break;
+                    default:
+                        runOnUiThread(() -> speedStateLed.blink());
+                        if (measurementController != null) {
+                            measurementController.notifyWheelRotationTime(value);
                         }
                         break;
                 }
@@ -200,26 +193,31 @@ public class MainActivity extends Activity {
     }
 
     private void prepareMeasurement() {
-        measurementController = new MeasurementController(2075d);
+        measurementController = new MeasurementController(MOCK_WHEEL_DIAMETER);
         measurementController.setListener(new MeasurementController.Listener() {
             @Override
-            public void refreshSpeed(double speed, long interval) {
-                int speedMod = (int)((speed - (int)speed) * 10);
-
-                runOnUiThread(() -> distanceText.setText("Time: "+interval));
-
+            public void refreshSpeed(double speed) {
+                int speedMod = Measurement.doubleModulo(speed);
                 runOnUiThread(() -> speedText.setText(getString(R.string.speed_format, (int)speed, speedMod)));
             }
 
             @Override
             public void refreshDistance(double distance) {
-                //runOnUiThread(() -> distanceText.setText(getString(R.string.distance_format, distance)));
+                runOnUiThread(() -> distanceText.setText(getString(R.string.distance_format, distance)));
             }
 
             @Override
             public void refreshCadence(int cadence) {
-                //runOnUiThread(() -> cadenceText.setText(getString(R.string.cadence_format, cadence)));
+                runOnUiThread(() -> cadenceText.setText(getString(R.string.cadence_format, cadence)));
             }
+        });
+    }
+
+    private void addLog(String message) {
+        runOnUiThread(() -> {
+            adapter.add(message);
+            adapter.notifyDataSetChanged();
+            listView.setSelection(listView.getCount() - 1);
         });
     }
 }
