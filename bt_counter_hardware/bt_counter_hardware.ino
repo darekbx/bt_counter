@@ -1,13 +1,13 @@
-const int refreshDelay = 5;
-const int counterValue = 1;
+const int refreshDelay = 1;
 const int cadenceValue = 2;
-
-int counterPin = 3;
-int cadencePin = 4;
-int stateLed = 5;
+const int counterPin = 3;
+const int cadencePin = 4;
+const int stateLed = 5;
 
 boolean isCounterHigh = false;
 boolean isCadenceHigh = false;
+
+long lastCounterTime = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -15,6 +15,8 @@ void setup() {
   pinMode(counterPin, INPUT);
   pinMode(cadencePin, INPUT);
   pinMode(stateLed, OUTPUT);
+  
+  lastCounterTime = millis();
 }
 
 void loop() {
@@ -27,12 +29,20 @@ void handleCounter() {
   int counterButtonState = digitalRead(counterPin);
   if (counterButtonState == HIGH && !isCounterHigh) {
     isCounterHigh = true;
-    Serial.write(counterValue);
+    long diff = calculateDiff();
+    Serial.write(diff);
     digitalWrite(stateLed, HIGH);
   } else if (isCounterHigh && counterButtonState == LOW) {
     isCounterHigh = false;
     digitalWrite(stateLed, LOW);
   }
+}
+
+long calculateDiff() {
+  long currentTime = millis();
+  long diff = currentTime - lastCounterTime;
+  lastCounterTime = currentTime;
+  return diff;
 }
 
 void handleCadence() {

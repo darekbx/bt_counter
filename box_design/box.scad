@@ -13,6 +13,7 @@ coverThickness = 2;
 coverDepth = 1;
 coverOffset = 0;
 holeRadius = 2;
+textDepth = 0.75;
 
 mountWidth = 14;
 mountHeigth = 6;
@@ -133,8 +134,10 @@ module verticalMount(y) {
 
 module logo() {
     rotate([90, 180, -90]) {
-        translate([31.5, -15, -1]) {
-            scale([1,1,1]) drawtext("BTC");
+        translate([32.5, -15, -textDepth]) {
+            scale([1,1,1]) {
+                drawtext("BTC");
+            }
         }
     }
 }
