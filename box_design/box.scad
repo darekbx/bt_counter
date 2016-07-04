@@ -44,7 +44,9 @@ module box() {
 
 module hole(x, y, z, cutHole) {
     translate([x, y, z]) {
-        cylinder(holeHeigth, holeRadius, holeRadius,$fn=fnValue, false);
+        translate([0, 0, -0.5]) {
+            cylinder(holeHeigth + 1, holeRadius, holeRadius,$fn=fnValue, false);
+        }
         if (cutHole) {
             translate([-holeRadius, -holeRadius, 2]) {
                 cube([holeRadius * 2, holeRadius * 2, 1], false);
@@ -140,8 +142,8 @@ module logo() {
 module sensorHoles() {
     holeSize = 3;
     holeDistance = 30;
-    translate([width - 3, holeDistance - holeSize/2, 0]) {
-        cube([3, holeSize, 5], false);
+    translate([width - 4, holeDistance - holeSize/2, 0]) {
+        cube([5, holeSize, 5], false);
     }
     translate([thickness, holeDistance, 5]) {
         rotate([0, 90, 0]) {
@@ -167,7 +169,7 @@ module components() {
     }
 }
 
-module model() {
+module model() render() {
     difference() {
         box();
         holes(bottomHoleOffset, false);
