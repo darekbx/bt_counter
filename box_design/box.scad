@@ -2,6 +2,7 @@ include <text_generator.scad>;
 
 profile = 0;
 showComponents = 0;
+fnValue = 20;
 
 // sizes in mm
 width = 74;
@@ -41,17 +42,22 @@ module box() {
     }
 }
 
-module hole(x, y, z) {
+module hole(x, y, z, cutHole) {
     translate([x, y, z]) {
-        cylinder(holeHeigth, holeRadius, holeRadius,$fn=20, false);
+        cylinder(holeHeigth, holeRadius, holeRadius,$fn=fnValue, false);
+        if (cutHole) {
+            translate([-holeRadius, -holeRadius, 2]) {
+                cube([holeRadius * 2, holeRadius * 2, 1], false);
+            }
+        }
     }
 }
 
-module holes(bottomOffset) {
-    hole(holePosition, holePosition, bottomOffset);
-    hole(holePosition, heightInside + 1, bottomOffset);
-    hole(widthInside + 1, holePosition, bottomOffset);
-    hole(widthInside + 1, heightInside + 1, bottomOffset);
+module holes(bottomOffset, cutHole) {
+    hole(holePosition, holePosition, bottomOffset, cutHole);
+    hole(holePosition, heightInside + 1, bottomOffset, cutHole);
+    hole(widthInside + 1, holePosition, bottomOffset, cutHole);
+    hole(widthInside + 1, heightInside + 1, bottomOffset, cutHole);
 }
 
 module holeBox(x, y) {
@@ -75,8 +81,8 @@ module holeBoxes() {
 module cover() {
     translate([0, 0, coverOffset]) {
         cube([width, height, coverThickness], false);
-        translate([thickness, thickness, coverThickness]) {
-            cube([widthInside, heightInside, coverDepth], false);
+        translate([thickness + 0.25, thickness + 0.25, coverThickness]) {
+            cube([widthInside - 0.5, heightInside - 0.5, coverDepth], false);
         }
     }
 }
@@ -86,7 +92,7 @@ module ledHoles() {
     translate([ledXPosition, thickness + 1, halfDepth]) {
         rotate([90, 0, 0]) {
             heigth = thickness + 2;
-            cylinder(heigth, ledRadius, ledRadius,$fn=20, false);
+            cylinder(heigth, ledRadius, ledRadius,$fn=fnValue, false);
         }
     }
 }
@@ -96,7 +102,7 @@ module switchHole() {
     translate([switchXPosition, thickness + 1, halfDepth]) {
         rotate([90, 0, 0]) {
             heigth = thickness + 2;
-            cylinder(heigth, switchRadius, switchRadius,$fn=20, false);
+            cylinder(heigth, switchRadius, switchRadius,$fn=fnValue, false);
         }
     }
 }
@@ -139,7 +145,7 @@ module sensorHoles() {
     }
     translate([thickness, holeDistance, 5]) {
         rotate([0, 90, 0]) {
-            cylinder(width, holeSize/2, holeSize/2,$fn=20, false);
+            cylinder(width, holeSize/2, holeSize/2,$fn=fnValue, false);
         }
     }
 }
@@ -164,7 +170,7 @@ module components() {
 module model() {
     difference() {
         box();
-        holes(bottomHoleOffset);
+        holes(bottomHoleOffset, false);
         ledHoles();
         switchHole();
         sensorHoles();
@@ -177,13 +183,13 @@ module model() {
     batteryHolder();
     
     translation = profile == 1 
-        ? [0, 0, -4] 
+        ? [0, 0, -3] 
         : [0, 78, depth - thickness];
     
     translate(translation) {
         difference() {
             cover();
-            holes(coverOffset);
+            holes(coverOffset, true);
         }
         mount(24);
         mount(49);
