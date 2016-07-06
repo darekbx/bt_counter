@@ -46,6 +46,9 @@ public class Measurement {
     }
 
     public static int doubleModulo(double value) {
+        if (value == 0) {
+            return 0;
+        }
         return (int)((value - (int)value) * 10);
     }
 }

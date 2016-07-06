@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:key="@string/settings_debug_mode_key"
+        android:title="@string/settings_debug_mode"
+        android:defaultValue="true"
+        />
+    <com.btcounter.utils.FloatEditTextPreference
+        android:key="@string/settings_wheel_size_key"
+        android:title="@string/settings_wheel_size"
+        android:inputType="numberSigned"
+        android:defaultValue="0"
+        />
+</PreferenceScreen>

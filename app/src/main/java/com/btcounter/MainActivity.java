@@ -1,14 +1,15 @@
 package com.btcounter;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,65 +20,56 @@ import android.widget.Toast;
 import com.btcounter.bikelogic.Measurement;
 import com.btcounter.bikelogic.MeasurementController;
 import com.btcounter.bt.BluetoothController;
-import com.btcounter.view.StateLed;
+import com.btcounter.fragments.MainFragment;
+import com.btcounter.settings.SettingsManager;
+import com.btcounter.utils.PermissionHelper;
 
 import static com.btcounter.bt.BluetoothController.DATA_CADENCE;
 
 /**
  * Created by daba on 2016-06-01.
  */
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getName();
-    private static final int LOCATION_PERMISSION_RQUEST = 100;
-
-    private static final double MOCK_WHEEL_DIAMETER = 2075d;
-
-    private ListView listView;
-    private Button start;
-    private Button stop;
-    private StateLed speedStateLed;
-    private StateLed cadenceStateLed;
-    private TextView speedText;
-    private TextView distanceText;
-    private TextView cadenceText;
+    public static final int LOCATION_PERMISSION_REQUEST = 100;
+    private static final int SETTINGS_REQUEST = 1;
 
     private BluetoothController bluetoothController;
     private MeasurementController measurementController;
-    private ArrayAdapter<String> adapter;
     private PowerManager.WakeLock wakeLock;
+    private MainFragment mainFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        bindViews();
+        addMainFragment();
+        initializeToolbar();
+        resetSpeedText();
+        checkPermissions();
 
-        listView.setAdapter(adapter = new ArrayAdapter<>(this, R.layout.adapter_log));
-        speedText.setText(getString(R.string.speed_format, 0, 0));
-
-        int permissionCheck = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            start.setEnabled(false);
-            stop.setEnabled(false);
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_PERMISSION_RQUEST);
-            return;
-        }
-
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        boolean gpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        if (!gpsEnabled) {
-            start.setEnabled(false);
-            stop.setEnabled(false);
-            Toast.makeText(this, "Please enable location", Toast.LENGTH_SHORT).show();
-            return;
+        if (!isWheelSizeSettingValid()) {
+            Toast.makeText(this, R.string.settings_wheel_size_invalid, Toast.LENGTH_SHORT).show();
         }
 
         keepScreenOnAndDim();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.actionbar_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                openSettings();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -93,10 +85,9 @@ public class MainActivity extends Activity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == LOCATION_PERMISSION_RQUEST) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                start.setEnabled(true);
-                stop.setEnabled(true);
+                setButtonsState(true);
             } else {
                 finish();
             }
@@ -119,20 +110,68 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void keepScreenOnAndDim() {
-        PowerManager powerManager = (PowerManager)getSystemService(POWER_SERVICE);
-        wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, TAG);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == SETTINGS_REQUEST) {
+            // TODO: refresh app when settigs has changed
+        }
     }
 
-    private void bindViews() {
-        listView = (ListView)findViewById(R.id.list);
-        start = (Button) findViewById(R.id.button_start);
-        stop = (Button)findViewById(R.id.button_stop);
-        speedStateLed = (StateLed)findViewById(R.id.speed_state_led);
-        cadenceStateLed = (StateLed)findViewById(R.id.cadence_state_led);
-        speedText = (TextView) findViewById(R.id.text_speed);
-        distanceText = (TextView) findViewById(R.id.distance_text);
-        cadenceText = (TextView) findViewById(R.id.cadence_text);
+    private void addMainFragment() {
+        mainFragment = new MainFragment();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(android.R.id.content, mainFragment)
+                .commit();
+    }
+
+    private void checkPermissions() {
+        if (PermissionHelper.hasLocationPermission(this)) {
+            if (!PermissionHelper.hasGpsPermission(this)) {
+                Toast.makeText(this, R.string.error_permission_gps, Toast.LENGTH_SHORT).show();
+                setButtonsState(false);
+            }
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST);
+            setButtonsState(false);
+        }
+    }
+
+    private void setButtonsState(boolean enabled) {
+        if (isMainFragmentActive()) {
+            mainFragment.setButtonsState(enabled);
+        }
+    }
+
+    private boolean isMainFragmentActive() {
+        return mainFragment != null && mainFragment.isAdded();
+    }
+
+    private void openSettings() {
+        Intent settingsIntent = new Intent(this, SettingsActivity.class);
+        startActivityForResult(settingsIntent, SETTINGS_REQUEST);
+    }
+
+    private void resetSpeedText() {
+        if (isMainFragmentActive()) {
+            mainFragment.updateSpeed(0);
+        }
+    }
+
+    private boolean isWheelSizeSettingValid() {
+        return getWheelSize() != 0;
+    }
+
+    private void initializeToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+    }
+
+    private void keepScreenOnAndDim() {
+        PowerManager powerManager = (PowerManager)getSystemService(POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, TAG);
     }
 
     public void onPrepareClick(View view) {
@@ -140,12 +179,10 @@ public class MainActivity extends Activity {
     }
 
     public void onTickClick(View view) {
-        speedStateLed.blink();
         measurementController.notifyWheelRotationTime(1000);
     }
 
     public void onCadenceTick(View view) {
-        cadenceStateLed.blink();
         measurementController.notifyCrankRotation();
     }
 
@@ -163,7 +200,7 @@ public class MainActivity extends Activity {
         bluetoothController.setListener(new BluetoothController.Listener() {
             @Override
             public void log(final String message) {
-                addLog(message);
+                runOnUiThread(() -> mainFragment.addLog(message));
             }
 
             @Override
@@ -175,13 +212,11 @@ public class MainActivity extends Activity {
             public void onData(int value) {
                 switch (value) {
                     case DATA_CADENCE:
-                        runOnUiThread(() -> cadenceStateLed.blink());
                         if (measurementController != null) {
                             measurementController.notifyCrankRotation();
                         }
                         break;
                     default:
-                        runOnUiThread(() -> speedStateLed.blink());
                         if (measurementController != null) {
                             measurementController.notifyWheelRotationTime(value);
                         }
@@ -193,31 +228,33 @@ public class MainActivity extends Activity {
     }
 
     private void prepareMeasurement() {
-        measurementController = new MeasurementController(MOCK_WHEEL_DIAMETER);
+        float wheelSize = getWheelSize();
+        measurementController = new MeasurementController(wheelSize);
         measurementController.setListener(new MeasurementController.Listener() {
             @Override
             public void refreshSpeed(double speed) {
-                int speedMod = Measurement.doubleModulo(speed);
-                runOnUiThread(() -> speedText.setText(getString(R.string.speed_format, (int)speed, speedMod)));
+                if (isMainFragmentActive()) {
+                    runOnUiThread(() -> mainFragment.updateSpeed(speed));
+                }
             }
 
             @Override
             public void refreshDistance(double distance) {
-                runOnUiThread(() -> distanceText.setText(getString(R.string.distance_format, distance)));
+                if (isMainFragmentActive()) {
+                    runOnUiThread(() -> mainFragment.updateDistance(distance));
+                }
             }
 
             @Override
             public void refreshCadence(int cadence) {
-                runOnUiThread(() -> cadenceText.setText(getString(R.string.cadence_format, cadence)));
+                if (isMainFragmentActive()) {
+                    runOnUiThread(() -> mainFragment.updateCadence(cadence));
+                }
             }
         });
     }
 
-    private void addLog(String message) {
-        runOnUiThread(() -> {
-            adapter.add(message);
-            adapter.notifyDataSetChanged();
-            listView.setSelection(listView.getCount() - 1);
-        });
+    private float getWheelSize() {
+        return new SettingsManager(this).getWheelSize();
     }
 }
