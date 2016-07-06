@@ -15,6 +15,8 @@
     <string name="speed_format" formatted="false">%02d.%01d</string>
     <string name="distance_format">%.3fkm</string>
 
+    <string name="settings_odo_key">odo_key</string>
+    <string name="settings_odo">ODO</string>
     <string name="settings_debug_mode_key">debug_key</string>
     <string name="settings_debug_mode">Is debug on</string>
     <string name="settings_wheel_size_key">wheel_size_key</string>

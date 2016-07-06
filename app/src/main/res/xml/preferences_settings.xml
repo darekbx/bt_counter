@@ -11,4 +11,10 @@
         android:inputType="numberSigned"
         android:defaultValue="0"
         />
+    <com.btcounter.utils.FloatEditTextPreference
+        android:key="@string/settings_odo_key"
+        android:title="@string/settings_odo"
+        android:inputType="numberSigned"
+        android:defaultValue="0"
+        />
 </PreferenceScreen>

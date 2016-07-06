@@ -45,12 +45,12 @@ public class MainFragment extends Fragment {
         stop.setEnabled(enabled);
     }
 
-    public void updateSpeed(double speed) {
-        int speedMod = Measurement.doubleModulo(speed);
+    public void updateSpeed(float speed) {
+        int speedMod = Measurement.floatModulo(speed);
         speedText.setText(getString(R.string.speed_format, (int)speed, speedMod));
     }
 
-    public void updateDistance(double distance) {
+    public void updateDistance(float distance) {
         distanceText.setText(getString(R.string.distance_format, distance));
     }
 

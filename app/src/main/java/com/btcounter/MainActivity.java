@@ -11,13 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.btcounter.bikelogic.Measurement;
 import com.btcounter.bikelogic.MeasurementController;
 import com.btcounter.bt.BluetoothController;
 import com.btcounter.fragments.MainFragment;
@@ -73,16 +68,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (bluetoothController != null) {
-            bluetoothController.stopScan();
-            bluetoothController.closeGatt();
-            bluetoothController.setListener(null);
-        }
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST) {
@@ -92,6 +77,17 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (bluetoothController != null) {
+            bluetoothController.stopScan();
+            bluetoothController.closeGatt();
+            bluetoothController.setListener(null);
+        }
+        saveOdo();
     }
 
     @Override
@@ -174,12 +170,18 @@ public class MainActivity extends AppCompatActivity {
         wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, TAG);
     }
 
+    private void saveOdo() {
+        if (measurementController != null) {
+            new SettingsManager(this).appendOdoAndSave(measurementController.getDistance());
+        }
+    }
+
     public void onPrepareClick(View view) {
         prepareMeasurement();
     }
 
     public void onTickClick(View view) {
-        measurementController.notifyWheelRotationTime(1000);
+        measurementController.notifyWheelRotationTime(480);
     }
 
     public void onCadenceTick(View view) {
@@ -232,14 +234,14 @@ public class MainActivity extends AppCompatActivity {
         measurementController = new MeasurementController(wheelSize);
         measurementController.setListener(new MeasurementController.Listener() {
             @Override
-            public void refreshSpeed(double speed) {
+            public void refreshSpeed(float speed) {
                 if (isMainFragmentActive()) {
                     runOnUiThread(() -> mainFragment.updateSpeed(speed));
                 }
             }
 
             @Override
-            public void refreshDistance(double distance) {
+            public void refreshDistance(float distance) {
                 if (isMainFragmentActive()) {
                     runOnUiThread(() -> mainFragment.updateDistance(distance));
                 }

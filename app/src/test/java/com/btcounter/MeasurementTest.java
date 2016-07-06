@@ -18,7 +18,7 @@ public class MeasurementTest {
 
     @Test
     public void test_speedToKmH() throws Exception {
-        assertEquals(7.2, Measurement.speedToKmH(2), 0);
+        assertEquals(7.2f, Measurement.speedToKmH(2), 0);
     }
 
     @Test
@@ -32,7 +32,7 @@ public class MeasurementTest {
     }
 
     @Test
-    public void test_double_modulo() throws Exception {
-        assertEquals(5, Measurement.doubleModulo(2.523), 0);
+    public void test_float_modulo() throws Exception {
+        assertEquals(5, Measurement.floatModulo(2.523f), 0);
     }
 }

@@ -13,8 +13,8 @@ import rx.Subscription;
 public class MeasurementController {
 
     public interface Listener {
-        void refreshSpeed(double speed);
-        void refreshDistance(double distance);
+        void refreshSpeed(float speed);
+        void refreshDistance(float distance);
         void refreshCadence(int cadence);
     }
 
@@ -23,11 +23,11 @@ public class MeasurementController {
     private Listener listener;
     private Subscription subscription;
 
-    private double wheelSize;
-    private double distance = 0;
+    private float wheelSize;
+    private float distance = 0;
     private long cranksRotationTime = 0;
 
-    public MeasurementController(double wheelSize) {
+    public MeasurementController(float wheelSize) {
         this.wheelSize = wheelSize;
     }
 
@@ -36,8 +36,8 @@ public class MeasurementController {
     }
 
     public void notifyWheelRotationTime(int timeDiff) {
-        double speedMs = Measurement.speed(wheelSize, timeDiff);
-        double speedKmH = Measurement.speedToKmH(speedMs);
+        float speedMs = Measurement.speed(wheelSize, timeDiff);
+        float speedKmH = Measurement.speedToKmH(speedMs);
         listener.refreshSpeed(speedKmH);
 
         distance += Measurement.distanceToKilometers(wheelSize);
@@ -57,6 +57,10 @@ public class MeasurementController {
             int cadence = Measurement.cadence(interval);
             listener.refreshCadence(cadence);
         }
+    }
+
+    public float getDistance() {
+        return distance;
     }
 
     private void delayedClean() {

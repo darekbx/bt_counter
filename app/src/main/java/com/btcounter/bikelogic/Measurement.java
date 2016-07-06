@@ -11,9 +11,9 @@ public class Measurement {
      * @param interval in milliseconds
      * @return Speed in m/s
      */
-    public static double speed(double wheelSize, double interval) {
-        double wheelSizeMeters = wheelSize / 1000d;
-        double intervalSeconds = interval / 1000d;
+    public static float speed(float wheelSize, float interval) {
+        float wheelSizeMeters = wheelSize / 1000f;
+        float intervalSeconds = interval / 1000f;
         return wheelSizeMeters / intervalSeconds;
     }
 
@@ -22,7 +22,7 @@ public class Measurement {
      * @param speedMs in m/s
      * @return Speed in km/h
      */
-    public static double speedToKmH(double speedMs) {
+    public static float speedToKmH(float speedMs) {
         return speedMs * 60 * 60 / 1000;
     }
 
@@ -41,11 +41,11 @@ public class Measurement {
      * @param distance in mm
      * @return distance in km
      */
-    public static double distanceToKilometers(double distance) {
-        return distance / 1000d / 1000d;
+    public static float distanceToKilometers(float distance) {
+        return distance / 1000f / 1000f;
     }
 
-    public static int doubleModulo(double value) {
+    public static int floatModulo(float value) {
         if (value == 0) {
             return 0;
         }
