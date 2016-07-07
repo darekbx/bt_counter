@@ -11,9 +11,10 @@
     <string name="button_tick">Tick</string>
     <string name="button_cadence">Cadence</string>
     <string name="unit_km_h">km/h</string>
-    <string name="cadence_format">Cadence: %03d</string>
+    <string name="cadence_format">%03dC</string>
     <string name="speed_format" formatted="false">%02d.%01d</string>
-    <string name="distance_format">%.3fkm</string>
+    <string name="distance_format">%.3fKM</string>
+    <string name="odo_format">%06dODO</string>
 
     <string name="settings_odo_key">odo_key</string>
     <string name="settings_odo">ODO</string>

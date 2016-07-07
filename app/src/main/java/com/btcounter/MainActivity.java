@@ -27,13 +27,16 @@ import static com.btcounter.bt.BluetoothController.DATA_CADENCE;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getName();
-    public static final int LOCATION_PERMISSION_REQUEST = 100;
     private static final int SETTINGS_REQUEST = 1;
+    private static final int LOCATION_PERMISSION_REQUEST = 100;
 
+    private SettingsManager settingsManager;
     private BluetoothController bluetoothController;
     private MeasurementController measurementController;
     private PowerManager.WakeLock wakeLock;
     private MainFragment mainFragment;
+
+    private float odo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,14 +44,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         addMainFragment();
         initializeToolbar();
+        initializeSettingsManager();
         resetSpeedText();
         checkPermissions();
+        loadOdo();
+        keepScreenOnAndDim();
 
         if (!isWheelSizeSettingValid()) {
             Toast.makeText(this, R.string.settings_wheel_size_invalid, Toast.LENGTH_SHORT).show();
         }
-
-        keepScreenOnAndDim();
     }
 
     @Override
@@ -135,6 +139,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void initializeSettingsManager() {
+        settingsManager = new SettingsManager(this);
+    }
+
     private void setButtonsState(boolean enabled) {
         if (isMainFragmentActive()) {
             mainFragment.setButtonsState(enabled);
@@ -172,7 +180,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveOdo() {
         if (measurementController != null) {
-            new SettingsManager(this).appendOdoAndSave(measurementController.getDistance());
+            settingsManager.appendOdoAndSave(measurementController.getDistance());
+        }
+    }
+
+    private void updateOdo(int odo) {
+        if (isMainFragmentActive()) {
+            runOnUiThread(() -> mainFragment.updateOdo(odo));
         }
     }
 
@@ -181,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onTickClick(View view) {
-        measurementController.notifyWheelRotationTime(480);
+        measurementController.notifyWheelRotationTime(180);
     }
 
     public void onCadenceTick(View view) {
@@ -193,8 +207,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onStopClick(View view) {
-        bluetoothController.stopScan();
-        bluetoothController.closeGatt();
+        if (bluetoothController != null) {
+            bluetoothController.stopScan();
+            bluetoothController.closeGatt();
+        }
     }
 
     private void startScan() {
@@ -245,6 +261,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isMainFragmentActive()) {
                     runOnUiThread(() -> mainFragment.updateDistance(distance));
                 }
+                appendToOdoAndUpdate(distance);
             }
 
             @Override
@@ -256,7 +273,15 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void appendToOdoAndUpdate(float distance) {
+        updateOdo((int)(odo + distance));
+    }
+
     private float getWheelSize() {
-        return new SettingsManager(this).getWheelSize();
+        return settingsManager.getWheelSize();
+    }
+
+    private void loadOdo() {
+        odo = settingsManager.getOdo();
     }
 }
