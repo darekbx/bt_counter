@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +14,7 @@ import android.widget.Toast;
 
 import com.btcounter.bikelogic.MeasurementController;
 import com.btcounter.bt.BluetoothController;
+import com.btcounter.fragments.DrawerFragment;
 import com.btcounter.fragments.MainFragment;
 import com.btcounter.settings.SettingsManager;
 import com.btcounter.utils.PermissionHelper;
@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private MeasurementController measurementController;
     private PowerManager.WakeLock wakeLock;
     private MainFragment mainFragment;
+    private DrawerFragment drawerFragment;
 
     private float odo;
 
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         addMainFragment();
-        initializeToolbar();
+        addDrawerFragment();
         initializeSettingsManager();
         resetSpeedText();
         checkPermissions();
@@ -121,7 +122,15 @@ public class MainActivity extends AppCompatActivity {
         mainFragment = new MainFragment();
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(android.R.id.content, mainFragment)
+                .add(R.id.content_frame, mainFragment)
+                .commit();
+    }
+
+    private void addDrawerFragment() {
+        drawerFragment = new DrawerFragment();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.content_drawer, drawerFragment)
                 .commit();
     }
 
@@ -144,13 +153,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setButtonsState(boolean enabled) {
-        if (isMainFragmentActive()) {
-            mainFragment.setButtonsState(enabled);
+        if (isDrawerFragmentActive()) {
+            drawerFragment.setButtonsState(enabled);
         }
     }
 
     private boolean isMainFragmentActive() {
         return mainFragment != null && mainFragment.isAdded();
+    }
+
+    private boolean isDrawerFragmentActive() {
+        return drawerFragment != null && drawerFragment.isAdded();
     }
 
     private void openSettings() {
@@ -166,11 +179,6 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isWheelSizeSettingValid() {
         return getWheelSize() != 0;
-    }
-
-    private void initializeToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
     }
 
     private void keepScreenOnAndDim() {
@@ -218,7 +226,9 @@ public class MainActivity extends AppCompatActivity {
         bluetoothController.setListener(new BluetoothController.Listener() {
             @Override
             public void log(final String message) {
-                runOnUiThread(() -> mainFragment.addLog(message));
+                if (isDrawerFragmentActive()) {
+                    runOnUiThread(() -> drawerFragment.addLog(message));
+                }
             }
 
             @Override

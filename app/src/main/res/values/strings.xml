@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BTCounter</string>
+    <string name="app_name">Counter</string>
 
     <string name="menu_settings">Settings</string>
 

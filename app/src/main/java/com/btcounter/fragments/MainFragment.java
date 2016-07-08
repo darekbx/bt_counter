@@ -1,17 +1,15 @@
 package com.btcounter.fragments;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.btcounter.R;
@@ -23,11 +21,6 @@ import com.btcounter.settings.SettingsManager;
  */
 public class MainFragment extends Fragment {
 
-    private ArrayAdapter<String> adapter;
-
-    private ListView listView;
-    private Button start;
-    private Button stop;
     private TextView speedText;
     private TextView distanceText;
     private TextView cadenceText;
@@ -40,14 +33,8 @@ public class MainFragment extends Fragment {
 
         bindViews(root);
         resetViews();
-        initilizeDebugList();
 
         return root;
-    }
-
-    public void setButtonsState(boolean enabled) {
-        start.setEnabled(enabled);
-        stop.setEnabled(enabled);
     }
 
     public void updateSpeed(float speed) {
@@ -67,16 +54,6 @@ public class MainFragment extends Fragment {
         odoText.setText(getForrmattedUnitText(getString(R.string.odo_format, odo), 3));
     }
 
-    public void addLog(String message) {
-        adapter.add(message);
-        adapter.notifyDataSetChanged();
-        listView.setSelection(listView.getCount() - 1);
-    }
-
-    private void initilizeDebugList() {
-        listView.setAdapter(adapter = new ArrayAdapter<>(getActivity(), R.layout.adapter_log));
-    }
-
     private void resetViews() {
         updateSpeed(0);
         updateDistance(0);
@@ -85,17 +62,13 @@ public class MainFragment extends Fragment {
     }
 
     private void bindViews(View root) {
-        listView = (ListView) root.findViewById(R.id.list);
-        start = (Button) root.findViewById(R.id.button_start);
-        stop = (Button) root.findViewById(R.id.button_stop);
         speedText = (TextView) root.findViewById(R.id.text_speed);
         distanceText = (TextView) root.findViewById(R.id.distance_text);
         cadenceText = (TextView) root.findViewById(R.id.cadence_text);
         odoText = (TextView) root.findViewById(R.id.odo_text);
 
-        if (!new SettingsManager(getActivity()).isDebugMode()) {
-            listView.setVisibility(View.GONE);
-        }
+        Toolbar toolbar = (Toolbar) root.findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
     }
 
     private SpannableString getForrmattedUnitText(String text, int unitLength) {

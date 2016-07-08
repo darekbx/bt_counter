@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/button_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text="@string/button_start"
+        android:onClick="onStartClick"
+        />
+    <Button
+        android:id="@+id/button_stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@id/button_start"
+        android:text="@string/button_stop"
+        android:onClick="onStopClick"
+        />
+
+    <Button
+        android:id="@+id/button_prepare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_start"
+        android:text="@string/button_prepare"
+        android:onClick="onPrepareClick"
+        />
+    <Button
+        android:id="@+id/button_tick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_stop"
+        android:layout_toRightOf="@id/button_start"
+        android:text="@string/button_tick"
+        android:onClick="onTickClick"
+        />
+    <Button
+        android:id="@+id/button_cadence"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_stop"
+        android:layout_toRightOf="@id/button_tick"
+        android:text="@string/button_cadence"
+        android:onClick="onCadenceTick"
+        />
+
+    <ListView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/button_prepare"
+        android:layout_alignParentBottom="true"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:background="#1000"
+        />
+
+</RelativeLayout>
