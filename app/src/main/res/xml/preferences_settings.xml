@@ -17,4 +17,10 @@
         android:inputType="numberSigned"
         android:defaultValue="0"
         />
+    <com.btcounter.utils.FloatEditTextPreference
+        android:key="@string/settings_max_speed_key"
+        android:title="@string/settings_max_speed"
+        android:inputType="numberSigned"
+        android:defaultValue="0"
+        />
 </PreferenceScreen>

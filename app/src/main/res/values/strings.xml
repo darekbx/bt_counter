@@ -10,11 +10,13 @@
     <string name="button_prepare">Prepare</string>
     <string name="button_tick">Tick</string>
     <string name="button_cadence">Cadence</string>
-    <string name="unit_km_h">km/h</string>
-    <string name="cadence_format">%03dC</string>
+    <string name="unit_km_h">%.2fKM\\H</string>
+    <string name="cadence_format">%03dC&#160;&#160;</string>
     <string name="speed_format" formatted="false">%02d.%01d</string>
     <string name="distance_format">%.3fKM</string>
     <string name="odo_format">%06dODO</string>
+    <string name="average_speed">Avg speed</string>
+    <string name="max_speed">Max speed</string>
 
     <string name="settings_odo_key">odo_key</string>
     <string name="settings_odo">ODO</string>
@@ -23,5 +25,7 @@
     <string name="settings_wheel_size_key">wheel_size_key</string>
     <string name="settings_wheel_size">Wheel size [mm]</string>
     <string name="settings_wheel_size_invalid">Invalid wheel size!</string>
+    <string name="settings_max_speed_key">max_speed</string>
+    <string name="settings_max_speed">Maximum speed</string>
 
 </resources>

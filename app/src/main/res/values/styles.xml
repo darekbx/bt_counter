@@ -15,4 +15,9 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
+    <style name="small_text">
+        <item name="android:textSize">24sp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+    </style>
+
 </resources>

@@ -33,9 +33,21 @@ public class SettingsManager {
         return getPreferences().getFloat(key, 0);
     }
 
+    public float getMaxSpeed() {
+        String key = context.getString(R.string.settings_max_speed_key);
+        return getPreferences().getFloat(key, 0);
+    }
+
     public boolean isDebugMode() {
         String key = context.getString(R.string.settings_debug_mode_key);
         return getPreferences().getBoolean(key, false);
+    }
+
+    public void saveMaxSpeed(float maxSpeed) {
+        String key = context.getString(R.string.settings_max_speed_key);
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putFloat(key, maxSpeed);
+        editor.apply();
     }
 
     private void saveOdo(float odo) {

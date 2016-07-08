@@ -21,6 +21,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         initListeners();
         setWheelSizeSummary();
         setOdoSummary();
+        setMaxSpeedSummary();
     }
 
     private void initListeners() {
@@ -36,6 +37,10 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         getOdoPreference().setSummary(String.valueOf(getOdo()));
     }
 
+    private void setMaxSpeedSummary() {
+        getMaxSpeedPreference().setSummary(String.valueOf(getMaxSpeed()));
+    }
+
     private FloatEditTextPreference getWheelSizePreference() {
         return (FloatEditTextPreference)
                 findPreference(getString(R.string.settings_wheel_size_key));
@@ -46,6 +51,12 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
                 findPreference(getString(R.string.settings_odo_key));
     }
 
+    private FloatEditTextPreference getMaxSpeedPreference() {
+        return (FloatEditTextPreference)
+                findPreference(getString(R.string.settings_max_speed_key));
+    }
+
+
     private float getWheelSize() {
         return new SettingsManager(getActivity()).getWheelSize();
     }
@@ -54,12 +65,18 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         return new SettingsManager(getActivity()).getOdo();
     }
 
+    private float getMaxSpeed() {
+        return new SettingsManager(getActivity()).getMaxSpeed();
+    }
+
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         if (preference.getKey().equals(getString(R.string.settings_wheel_size_key))) {
             getWheelSizePreference().setSummary(String.valueOf(newValue));
         } else if (preference.getKey().equals(getString(R.string.settings_odo_key))) {
             getOdoPreference().setSummary(String.valueOf(newValue));
+        } else if (preference.getKey().equals(getString(R.string.settings_max_speed_key))) {
+            getMaxSpeedPreference().setSummary(String.valueOf(newValue));
         }
         return true;
     }

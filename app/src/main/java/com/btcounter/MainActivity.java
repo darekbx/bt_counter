@@ -19,6 +19,8 @@ import com.btcounter.fragments.MainFragment;
 import com.btcounter.settings.SettingsManager;
 import com.btcounter.utils.PermissionHelper;
 
+import java.util.Random;
+
 import static com.btcounter.bt.BluetoothController.DATA_CADENCE;
 
 /**
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerFragment drawerFragment;
 
     private float odo;
+    private float maxSpeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         resetSpeedText();
         checkPermissions();
         loadOdo();
+        loadMaxSpeed();
         keepScreenOnAndDim();
 
         if (!isWheelSizeSettingValid()) {
@@ -101,6 +105,9 @@ public class MainActivity extends AppCompatActivity {
         if (wakeLock != null) {
             wakeLock.acquire();
         }
+        invalidateOdo((int)odo);
+        invalidateMaxSpeed();
+        invalidateAverageSpeed(0);
     }
 
     @Override
@@ -173,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void resetSpeedText() {
         if (isMainFragmentActive()) {
-            mainFragment.updateSpeed(0);
+            mainFragment.invalidateSpeed(0);
         }
     }
 
@@ -192,20 +199,63 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void updateOdo(int odo) {
+    private void invalidateOdo(int odo) {
         if (isMainFragmentActive()) {
-            runOnUiThread(() -> mainFragment.updateOdo(odo));
+            runOnUiThread(() -> mainFragment.invalidateOdo(odo));
         }
     }
 
+    private void invalidateMaxSpeed() {
+        if (isMainFragmentActive()) {
+            runOnUiThread(() -> mainFragment.invalidateMaxSpeed(maxSpeed));
+        }
+    }
+
+    private void invalidateAverageSpeed(float averageSpeed) {
+        if (isMainFragmentActive()) {
+            runOnUiThread(() -> mainFragment.invalidateAverageSpeed(averageSpeed));
+        }
+    }
+
+    private void updateMaxSpeed(float speed) {
+        if (speed > maxSpeed) {
+            maxSpeed = speed;
+            saveMaxSpeed();
+            invalidateMaxSpeed();
+        }
+    }
+
+    private void saveMaxSpeed() {
+        settingsManager.saveMaxSpeed(maxSpeed);
+    }
+
+    private void appendToOdoAndUpdate(float distance) {
+        invalidateOdo((int)(odo + distance));
+    }
+
+    private float getWheelSize() {
+        return settingsManager.getWheelSize();
+    }
+
+    private void loadOdo() {
+        odo = settingsManager.getOdo();
+    }
+
+    private void loadMaxSpeed() {
+        maxSpeed = settingsManager.getMaxSpeed();
+    }
+
+    // TOREMOVE
     public void onPrepareClick(View view) {
         prepareMeasurement();
     }
 
+    // TOREMOVE
     public void onTickClick(View view) {
-        measurementController.notifyWheelRotationTime(180);
+        measurementController.notifyWheelRotationTime(new Random().nextInt(800) + 100);
     }
 
+    // TOREMOVE
     public void onCadenceTick(View view) {
         measurementController.notifyCrankRotation();
     }
@@ -262,36 +312,30 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void refreshSpeed(float speed) {
                 if (isMainFragmentActive()) {
-                    runOnUiThread(() -> mainFragment.updateSpeed(speed));
+                    runOnUiThread(() -> mainFragment.invalidateSpeed(speed));
                 }
+                updateMaxSpeed(speed);
             }
 
             @Override
             public void refreshDistance(float distance) {
                 if (isMainFragmentActive()) {
-                    runOnUiThread(() -> mainFragment.updateDistance(distance));
+                    runOnUiThread(() -> mainFragment.invalidateDistance(distance));
                 }
                 appendToOdoAndUpdate(distance);
             }
 
             @Override
+            public void refreshAverageSpeed(float averageSpeed) {
+                invalidateAverageSpeed(averageSpeed);
+            }
+
+            @Override
             public void refreshCadence(int cadence) {
                 if (isMainFragmentActive()) {
-                    runOnUiThread(() -> mainFragment.updateCadence(cadence));
+                    runOnUiThread(() -> mainFragment.invalidateCadence(cadence));
                 }
             }
         });
-    }
-
-    private void appendToOdoAndUpdate(float distance) {
-        updateOdo((int)(odo + distance));
-    }
-
-    private float getWheelSize() {
-        return settingsManager.getWheelSize();
-    }
-
-    private void loadOdo() {
-        odo = settingsManager.getOdo();
     }
 }

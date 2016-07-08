@@ -15,6 +15,7 @@ public class MeasurementController {
     public interface Listener {
         void refreshSpeed(float speed);
         void refreshDistance(float distance);
+        void refreshAverageSpeed(float averageSpeed);
         void refreshCadence(int cadence);
     }
 
@@ -25,6 +26,8 @@ public class MeasurementController {
 
     private float wheelSize;
     private float distance = 0;
+    private float averageSum = 0;
+    private float averageCount = 0;
     private long cranksRotationTime = 0;
 
     public MeasurementController(float wheelSize) {
@@ -43,6 +46,7 @@ public class MeasurementController {
         distance += Measurement.distanceToKilometers(wheelSize);
         listener.refreshDistance(distance);
 
+        updateAverage(speedKmH);
         delayedClean();
     }
 
@@ -61,6 +65,13 @@ public class MeasurementController {
 
     public float getDistance() {
         return distance;
+    }
+
+    private void updateAverage(float speed) {
+        averageSum += speed;
+        averageCount++;
+        float averageSpeed = averageSum / averageCount;
+        listener.refreshAverageSpeed(averageSpeed);
     }
 
     private void delayedClean() {

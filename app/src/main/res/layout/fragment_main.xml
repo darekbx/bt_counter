@@ -29,10 +29,22 @@
         />
 
     <com.btcounter.utils.FontTextView
-        android:id="@+id/distance_text"
+        android:id="@+id/odo_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/text_speed"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="-6dp"
+        android:layout_marginRight="10dp"
+        android:textSize="36sp"
+        android:typeface="monospace"
+        />
+
+    <com.btcounter.utils.FontTextView
+        android:id="@+id/distance_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/odo_text"
         android:layout_alignParentRight="true"
         android:layout_marginTop="-12dp"
         android:layout_marginRight="10dp"
@@ -44,23 +56,55 @@
         android:id="@+id/cadence_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/text_speed"
-        android:layout_alignParentLeft="true"
+        android:layout_below="@id/distance_text"
+        android:layout_alignParentRight="true"
         android:layout_marginTop="-12dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginRight="-7dp"
         android:textSize="52sp"
         android:typeface="monospace"
         />
 
     <com.btcounter.utils.FontTextView
-        android:id="@+id/odo_text"
+        android:id="@+id/average_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/cadence_text"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="-6dp"
-        android:layout_marginRight="10dp"
-        android:textSize="36sp"
-        android:typeface="monospace"
+        android:layout_below="@id/text_speed"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="-4dp"
+        android:text="@string/average_speed"
+        android:textColor="@color/text_unit_color"
+        android:textAllCaps="true"
+        style="@style/small_text"
+        />
+    <com.btcounter.utils.FontTextView
+        android:id="@+id/average_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/average_text"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="-4dp"
+        style="@style/small_text"
+        />
+
+    <com.btcounter.utils.FontTextView
+        android:id="@+id/max_speed_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/cadence_text"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="6dp"
+        style="@style/small_text"
+        />
+    <com.btcounter.utils.FontTextView
+        android:id="@+id/max_speed_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/max_speed_value"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="-4dp"
+        android:textAllCaps="true"
+        android:text="@string/max_speed"
+        android:textColor="@color/text_unit_color"
+        style="@style/small_text"
         />
 </RelativeLayout>
