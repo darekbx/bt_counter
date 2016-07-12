@@ -1,6 +1,9 @@
 package com.btcounter;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -123,6 +126,19 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == SETTINGS_REQUEST) {
             // TODO: refresh app when settigs has changed
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        showConfirmExitDialog();
+    }
+
+    private void showConfirmExitDialog() {
+        new AlertDialog.Builder(this)
+                .setMessage(R.string.confirm_exit_title)
+                .setPositiveButton(R.string.yes, (DialogInterface dialog, int which) -> super.onBackPressed())
+                .setNegativeButton(R.string.no, null)
+                .show();
     }
 
     private void addMainFragment() {

@@ -28,4 +28,8 @@
     <string name="settings_max_speed_key">max_speed</string>
     <string name="settings_max_speed">Maximum speed</string>
 
+    <string name="confirm_exit_title">Close application?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
 </resources>
