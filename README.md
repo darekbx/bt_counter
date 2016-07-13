@@ -7,9 +7,6 @@ BTCounter TODO:
 #!java
 
 Trasy:
-- max speed (saved in preferences)
-- average speed (counted per session)
-
 - dodanie trasy
 - wybór trasy
 - punkty trasy:
