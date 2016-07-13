@@ -1,7 +1,7 @@
 include <text_generator.scad>;
 
 profile = 0;
-showComponents = 0;
+showComponents = 1;
 fnValue = 20;
 
 // sizes in mm
@@ -134,7 +134,7 @@ module verticalMount(y) {
 
 module logo() {
     rotate([90, 180, -90]) {
-        translate([32.5, -15, -textDepth]) {
+        translate([50, -18, -textDepth]) {
             scale([1,1,1]) {
                 drawtext("BTC");
             }
@@ -167,8 +167,15 @@ module components() {
         cube([batteryHolderWidth, batteryHolderSize, batteryHolderSize]);
     }
     // bluno 5x30x34
-    translate([10, 10, 24]) {
+    translate([30, 10, 24]) {
         cube([34, 30, 5]);
+    }
+}
+
+module voltmeter() {
+    // voltmeter 25x12x8
+    translate([-1, 14, 8]) {
+        cube([5, 25, 12]);
     }
 }
 
@@ -180,6 +187,7 @@ module model() render() {
         switchHole();
         sensorHoles();
         logo();
+        voltmeter();
     }
     
     holeBoxes();
@@ -201,7 +209,7 @@ module model() render() {
     }
     
     if (showComponents == 1) {
-        components();
+        #components();
     }
 }
 
