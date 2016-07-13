@@ -172,14 +172,12 @@ public class BluetoothController {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             super.onCharacteristicChanged(gatt, characteristic);
-            float value = characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT, 0);
-            switch ((int)value) {
-                case 2:
-                    listener.onData(DATA_CADENCE);
-                    break;
-                default:
-                    listener.onData((int)value);
-                    break;
+            float floatValue = characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT, 0);
+            int intValue = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT8, 0);
+            if (intValue == DATA_CADENCE) {
+                listener.onData(DATA_CADENCE);
+            } else {
+                listener.onData((int)floatValue);
             }
         }
     };
