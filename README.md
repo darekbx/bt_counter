@@ -7,6 +7,9 @@ BTCounter TODO:
 #!java
 
 Trasy:
+- ikonka
+- wykres prędkości jednej sesji
+- czas przejazdu w jednej sesji
 - dodanie trasy
 - wybór trasy
 - punkty trasy:
