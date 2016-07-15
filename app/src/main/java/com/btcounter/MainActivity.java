@@ -289,6 +289,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void startScan() {
         bluetoothController = new BluetoothController(this);
+        bluetoothController.setIsDebug(settingsManager.isDebugMode());
         bluetoothController.setListener(new BluetoothController.Listener() {
             @Override
             public void log(final String message) {
@@ -315,6 +316,13 @@ public class MainActivity extends AppCompatActivity {
                             measurementController.notifyWheelRotationTime(value);
                         }
                         break;
+                }
+            }
+
+            @Override
+            public void onDebug(String message) {
+                if (isMainFragmentActive()) {
+                    runOnUiThread(() -> mainFragment.updateDebug(message));
                 }
             }
         });

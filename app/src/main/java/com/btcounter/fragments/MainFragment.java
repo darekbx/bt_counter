@@ -27,6 +27,7 @@ public class MainFragment extends Fragment {
     private TextView odoText;
     private TextView averageSpeedText;
     private TextView maxSpeedText;
+    private TextView debugText;
 
     @Nullable
     @Override
@@ -64,6 +65,10 @@ public class MainFragment extends Fragment {
         maxSpeedText.setText(getForrmattedUnitText(getString(R.string.unit_km_h, maxSpeed), 4));
     }
 
+    public void updateDebug(String message) {
+        debugText.setText(message);
+    }
+
     private void resetViews() {
         invalidateSpeed(0);
         invalidateDistance(0);
@@ -78,6 +83,11 @@ public class MainFragment extends Fragment {
         odoText = (TextView) root.findViewById(R.id.odo_text);
         averageSpeedText = (TextView) root.findViewById(R.id.average_value);
         maxSpeedText = (TextView) root.findViewById(R.id.max_speed_value);
+        debugText = (TextView) root.findViewById(R.id.debug);
+
+        if (!new SettingsManager(getActivity()).isDebugMode()) {
+            debugText.setVisibility(View.GONE);
+        }
 
         Toolbar toolbar = (Toolbar) root.findViewById(R.id.toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
