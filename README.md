@@ -7,9 +7,9 @@ BTCounter TODO:
 #!java
 
 Trasy:
-- max speed (saved in preferences)
-- average speed (counted per session)
-
+- ikonka
+- wykres prędkości jednej sesji
+- czas przejazdu w jednej sesji
 - dodanie trasy
 - wybór trasy
 - punkty trasy:

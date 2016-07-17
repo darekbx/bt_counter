@@ -41,7 +41,9 @@ public class DrawerFragment extends Fragment {
         stop = (Button) root.findViewById(R.id.button_stop);
 
         if (!new SettingsManager(getActivity()).isDebugMode()) {
-            listView.setVisibility(View.GONE);
+            root.findViewById(R.id.button_prepare).setVisibility(View.GONE);
+            root.findViewById(R.id.button_tick).setVisibility(View.GONE);
+            root.findViewById(R.id.button_cadence).setVisibility(View.GONE);
         }
     }
 
