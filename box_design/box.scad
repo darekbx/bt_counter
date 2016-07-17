@@ -134,7 +134,7 @@ module verticalMount(y) {
 
 module logo() {
     rotate([90, 180, -90]) {
-        translate([50, -18, -textDepth]) {
+        translate([48, -19, -textDepth]) {
             scale([1,1,1]) {
                 drawtext("BTC");
             }
@@ -174,8 +174,8 @@ module components() {
 
 module voltmeter() {
     // voltmeter 25x12x8
-    translate([-1, 14, 8]) {
-        cube([5, 25, 12]);
+    translate([-1, 15, 10]) {
+        #cube([7, 23, 10.5]);
     }
 }
 
