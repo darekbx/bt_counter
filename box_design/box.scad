@@ -68,18 +68,18 @@ module holeBox(x, y) {
     translate([x, y, 1.5]) {
         difference() {
             cube([7, 7, depth - 1 - thickness]);
-            translate([1.5, 1.5, 0]) {
-                cube([4, 4, depth - 1 - thickness]);
+            translate([1, 1, 0]) {
+                cube([5, 5, depth - 1 - thickness]);
             }
         }
     }
 }
 
 module holeBoxes() {
-    holeBox(0.5 + 1, 0.5 + 1);
-    holeBox(0.5 + 1, heightInside - thickness - 2.5);
-    holeBox(widthInside - thickness - 2.5, 0.5 + 1);
-    holeBox(widthInside - thickness - 2.5, heightInside - thickness - 2.5);
+    holeBox(1, 1);
+    holeBox(1, heightInside - thickness - 2);
+    holeBox(widthInside - thickness - 2, 1);
+    holeBox(widthInside - thickness - 2, heightInside - thickness - 2);
 }
 
 module cover() {
