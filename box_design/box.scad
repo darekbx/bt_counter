@@ -1,14 +1,15 @@
 include <text_generator.scad>;
 
 profile = 0;
-showComponents = 1;
+showComponents = 0;
 fnValue = 20;
+showCover = 0;
 
 // sizes in mm
 width = 74;
 height = 76;
 depth = 30; 
-thickness = 3;
+thickness = 2;
 coverThickness = 2;
 coverDepth = 1;
 coverOffset = 0;
@@ -30,7 +31,7 @@ switchXPosition = width - controlsOffset;
 
 holeHeigth = thickness;
 bottomHoleOffset = depth - thickness;
-holePosition = 2 * thickness - 1;
+holePosition = 2 * thickness;
 widthInside = width - (2 * thickness);
 heightInside = height - (2 * thickness);
 
@@ -57,17 +58,17 @@ module hole(x, y, z, cutHole) {
 }
 
 module holes(bottomOffset, cutHole) {
-    hole(holePosition, holePosition, bottomOffset, cutHole);
-    hole(holePosition, heightInside + 1, bottomOffset, cutHole);
-    hole(widthInside + 1, holePosition, bottomOffset, cutHole);
-    hole(widthInside + 1, heightInside + 1, bottomOffset, cutHole);
+    hole(holePosition + 1, holePosition + 1, bottomOffset, cutHole);
+    hole(holePosition + 1, heightInside - 1, bottomOffset, cutHole);
+    hole(widthInside - 1, holePosition + 1, bottomOffset, cutHole);
+    hole(widthInside - 1, heightInside - 1, bottomOffset, cutHole);
 }
 
 module holeBox(x, y) {
-    translate([x, y, 1]) {
+    translate([x, y, 1.5]) {
         difference() {
-            cube([8, 8, depth - 1 - thickness]);
-            translate([2, 2, 0]) {
+            cube([7, 7, depth - 1 - thickness]);
+            translate([1.5, 1.5, 0]) {
                 cube([4, 4, depth - 1 - thickness]);
             }
         }
@@ -75,10 +76,10 @@ module holeBox(x, y) {
 }
 
 module holeBoxes() {
-    holeBox(1, 1);
-    holeBox(1, heightInside - thickness);
-    holeBox(widthInside - thickness, 1);
-    holeBox(widthInside - thickness, heightInside - thickness);
+    holeBox(0.5 + 1, 0.5 + 1);
+    holeBox(0.5 + 1, heightInside - thickness - 2.5);
+    holeBox(widthInside - thickness - 2.5, 0.5 + 1);
+    holeBox(widthInside - thickness - 2.5, heightInside - thickness - 2.5);
 }
 
 module cover() {
@@ -156,14 +157,14 @@ module sensorHoles() {
 }
 
 module batteryHolder() {
-    translate([2, height - 32, depth - 22]) {
-        cube([width - 4, 3, 20]);
+    translate([2, height - 30, depth - 22]) {
+        cube([width - 4, 2, 20]);
     }  
 }
 
 module components() {
     // battery box 55x25x25
-    translate([9.5, height - 28.5, 1]) {
+    translate([9.5, height - 27.5, 1]) {
         cube([batteryHolderWidth, batteryHolderSize, batteryHolderSize]);
     }
     // bluno 5x30x34
@@ -173,10 +174,36 @@ module components() {
 }
 
 module voltmeter() {
-    // voltmeter 25x12x8
+    // voltmeter 23x10.5x6
+    // holes width 27mm
+    // hole size 2mm
     translate([-1, 15, 10]) {
         #cube([7, 23, 10.5]);
     }
+}
+
+module voltometerMount() {
+    translate([thickness, 9, 10]) {
+        difference() {
+            cube([4, 6, 18]);
+            translate([0, 3, 5]) {
+                rotate([90, 0, 90]) {
+                    #cylinder(20, 1, 1,$fn=fnValue, false);
+                }
+            }
+        }
+    }
+    translate([thickness, 38, 10]) {
+        difference() {
+            cube([4, 6, 18]);
+            translate([0, 3, 5]) {
+                rotate([90, 0, 90]) {
+                    #cylinder(20, 1, 1,$fn=fnValue, false);
+                }
+            }
+        }
+    }
+    
 }
 
 module model() render() {
@@ -190,6 +217,7 @@ module model() render() {
         voltmeter();
     }
     
+    voltometerMount();
     holeBoxes();
     verticalMount(0);
     verticalMount(height - mountWidth);
@@ -199,13 +227,15 @@ module model() render() {
         ? [0, 0, -3] 
         : [0, 78, depth - thickness];
     
-    translate(translation) {
-        difference() {
-            cover();
-            holes(coverOffset, true);
+    if (showCover == 1) {
+        translate(translation) {
+            difference() {
+                cover();
+                holes(coverOffset, true);
+            }
+            mount(24);
+            mount(49);
         }
-        mount(24);
-        mount(49);
     }
     
     if (showComponents == 1) {
