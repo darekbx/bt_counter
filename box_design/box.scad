@@ -183,10 +183,10 @@ module voltmeter() {
 }
 
 module voltometerMount() {
-    translate([thickness, 9, 10]) {
+    translate([thickness, 11, 10]) {
         difference() {
-            cube([4, 6, 18]);
-            translate([0, 3, 5]) {
+            cube([4, 4, 18]);
+            translate([0, 2.5, 5.5]) {
                 rotate([90, 0, 90]) {
                     #cylinder(20, 1, 1,$fn=fnValue, false);
                 }
@@ -195,8 +195,8 @@ module voltometerMount() {
     }
     translate([thickness, 38, 10]) {
         difference() {
-            cube([4, 6, 18]);
-            translate([0, 3, 5]) {
+            cube([4, 4, 18]);
+            translate([0, 1.5, 5.5]) {
                 rotate([90, 0, 90]) {
                     #cylinder(20, 1, 1,$fn=fnValue, false);
                 }
