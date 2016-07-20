@@ -7,7 +7,9 @@ BTCounter TODO:
 #!java
 
 TODO:
-- kasowanie trip przyciskiem
+- naprawa kadencji - modyfikacja bluno tak żeby dla prędkości i kadencji wysyłało dane w tym samym formacie
+- odświeżanie ekranu settings po zmianie wartości
+- odświeżanie głównego ekranu po zmianie wartości z settings
 - wykres prędkości jednej sesji
 - czas przejazdu w jednej sesji
 - dodanie trasy
