@@ -2,7 +2,6 @@ package com.btcounter;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,6 +20,7 @@ import com.btcounter.fragments.DrawerFragment;
 import com.btcounter.fragments.MainFragment;
 import com.btcounter.settings.SettingsManager;
 import com.btcounter.utils.PermissionHelper;
+import com.btcounter.utils.TimeUtils;
 
 import java.util.Random;
 
@@ -99,7 +99,12 @@ public class MainActivity extends AppCompatActivity {
             bluetoothController.closeGatt();
             bluetoothController.setListener(null);
         }
+        if (measurementController != null) {
+            measurementController.unsubscribe();
+            measurementController.setListener(null);
+        }
         saveOdo();
+        saveDistance();
     }
 
     @Override
@@ -108,9 +113,7 @@ public class MainActivity extends AppCompatActivity {
         if (wakeLock != null) {
             wakeLock.acquire();
         }
-        invalidateOdo((int)odo);
-        invalidateMaxSpeed();
-        invalidateAverageSpeed(0);
+        initializeDisplay();
     }
 
     @Override
@@ -131,6 +134,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         showConfirmExitDialog();
+    }
+
+    private void initializeDisplay() {
+        if (bluetoothController == null) {
+            invalidateOdo((int) odo);
+            invalidateMaxSpeed();
+            invalidateAverageSpeed(0);
+            invalidateDistance(settingsManager.getDistance());
+        }
     }
 
     private void showConfirmExitDialog() {
@@ -215,6 +227,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void saveDistance() {
+        if (measurementController != null) {
+            settingsManager.saveDistance(measurementController.getDistance());
+        }
+    }
+
     private void invalidateOdo(int odo) {
         if (isMainFragmentActive()) {
             runOnUiThread(() -> mainFragment.invalidateOdo(odo));
@@ -230,6 +248,19 @@ public class MainActivity extends AppCompatActivity {
     private void invalidateAverageSpeed(float averageSpeed) {
         if (isMainFragmentActive()) {
             runOnUiThread(() -> mainFragment.invalidateAverageSpeed(averageSpeed));
+        }
+    }
+
+    private void invalidateDistance(float distance) {
+        if (isMainFragmentActive()) {
+            runOnUiThread(() -> mainFragment.invalidateDistance(distance));
+        }
+    }
+
+    private void invalidateTime(long ticks) {
+        if (isMainFragmentActive()) {
+            final String time = TimeUtils.extractTime(ticks);
+            runOnUiThread(() -> mainFragment.updateToolbarTitle(getString(R.string.session_time) + time));
         }
     }
 
@@ -332,6 +363,7 @@ public class MainActivity extends AppCompatActivity {
     private void prepareMeasurement() {
         float wheelSize = getWheelSize();
         measurementController = new MeasurementController(wheelSize);
+        measurementController.setDistance(settingsManager.getDistance());
         measurementController.setListener(new MeasurementController.Listener() {
             @Override
             public void refreshSpeed(float speed) {
@@ -343,9 +375,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void refreshDistance(float distance) {
-                if (isMainFragmentActive()) {
-                    runOnUiThread(() -> mainFragment.invalidateDistance(distance));
-                }
+                invalidateDistance(distance);
                 appendToOdoAndUpdate(distance);
             }
 
@@ -359,6 +389,11 @@ public class MainActivity extends AppCompatActivity {
                 if (isMainFragmentActive()) {
                     runOnUiThread(() -> mainFragment.invalidateCadence(cadence));
                 }
+            }
+
+            @Override
+            public void refreshTime(long time) {
+                invalidateTime(time);
             }
         });
     }

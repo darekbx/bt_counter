@@ -50,6 +50,17 @@ public class SettingsManager {
         editor.apply();
     }
 
+    public float getDistance() {
+        String key = context.getString(R.string.settings_distance_key);
+        return getPreferences().getFloat(key, 0);
+    }
+
+    public void saveDistance(float distance) {
+        String key = context.getString(R.string.settings_distance_key);
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putFloat(key, distance);
+        editor.apply();
+    }
     private void saveOdo(float odo) {
         String key = context.getString(R.string.settings_odo_key);
         SharedPreferences.Editor editor = getPreferences().edit();

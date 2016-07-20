@@ -17,18 +17,22 @@ public class MeasurementController {
         void refreshDistance(float distance);
         void refreshAverageSpeed(float averageSpeed);
         void refreshCadence(int cadence);
+        void refreshTime(long time);
     }
 
     private static final int CLEAN_DELAY = 2;
+    private static final int TIME_DELAY = 1;
 
     private Listener listener;
     private Subscription subscription;
+    private Subscription timeSubscription;
 
     private float wheelSize;
     private float distance = 0;
     private float averageSum = 0;
     private float averageCount = 0;
     private long cranksRotationTime = 0;
+    private long tripTime = 0;
 
     public MeasurementController(float wheelSize) {
         this.wheelSize = wheelSize;
@@ -48,6 +52,10 @@ public class MeasurementController {
 
         updateAverage(speedKmH);
         delayedClean();
+
+        if (timeSubscription == null) {
+            subscribeTime();
+        }
     }
 
     public void notifyCrankRotation() {
@@ -67,6 +75,19 @@ public class MeasurementController {
         return distance;
     }
 
+    public void setDistance(float distance) {
+        this.distance = distance;
+    }
+
+    public void unsubscribe() {
+        if (subscription != null) {
+            subscription.unsubscribe();
+        }
+        if (timeSubscription != null) {
+            timeSubscription.unsubscribe();
+        }
+    }
+
     private void updateAverage(float speed) {
         averageSum += speed;
         averageCount++;
@@ -84,6 +105,17 @@ public class MeasurementController {
                 .subscribe((a) -> {
                     listener.refreshSpeed(0);
                     listener.refreshCadence(0);
+                });
+    }
+
+    public void subscribeTime() {
+        timeSubscription = Observable
+                .just(0)
+                .delay(TIME_DELAY, TimeUnit.SECONDS)
+                .repeat()
+                .subscribe((a) -> {
+                    tripTime++;
+                    listener.refreshTime(tripTime);
                 });
     }
 

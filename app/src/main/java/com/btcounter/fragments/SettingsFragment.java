@@ -22,11 +22,14 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         setWheelSizeSummary();
         setOdoSummary();
         setMaxSpeedSummary();
+        setTripDistanceSummary();
     }
 
     private void initListeners() {
         getWheelSizePreference().setOnPreferenceChangeListener(this);
         getOdoPreference().setOnPreferenceChangeListener(this);
+        getMaxSpeedPreference().setOnPreferenceChangeListener(this);
+        getTripDistancePreference().setOnPreferenceChangeListener(this);
     }
 
     private void setWheelSizeSummary() {
@@ -39,6 +42,10 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
     private void setMaxSpeedSummary() {
         getMaxSpeedPreference().setSummary(String.valueOf(getMaxSpeed()));
+    }
+
+    private void setTripDistanceSummary() {
+        getTripDistancePreference().setSummary(String.valueOf(getTripDistance()));
     }
 
     private FloatEditTextPreference getWheelSizePreference() {
@@ -56,6 +63,10 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
                 findPreference(getString(R.string.settings_max_speed_key));
     }
 
+    private FloatEditTextPreference getTripDistancePreference() {
+        return (FloatEditTextPreference)
+                findPreference(getString(R.string.settings_distance_key));
+    }
 
     private float getWheelSize() {
         return new SettingsManager(getActivity()).getWheelSize();
@@ -69,6 +80,10 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         return new SettingsManager(getActivity()).getMaxSpeed();
     }
 
+    private float getTripDistance() {
+        return new SettingsManager(getActivity()).getDistance();
+    }
+
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         if (preference.getKey().equals(getString(R.string.settings_wheel_size_key))) {
@@ -77,6 +92,8 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             getOdoPreference().setSummary(String.valueOf(newValue));
         } else if (preference.getKey().equals(getString(R.string.settings_max_speed_key))) {
             getMaxSpeedPreference().setSummary(String.valueOf(newValue));
+        } else if (preference.getKey().equals(getString(R.string.settings_distance_key))) {
+            getTripDistancePreference().setSummary(String.valueOf(newValue));
         }
         return true;
     }

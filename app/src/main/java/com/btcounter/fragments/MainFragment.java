@@ -28,6 +28,7 @@ public class MainFragment extends Fragment {
     private TextView averageSpeedText;
     private TextView maxSpeedText;
     private TextView debugText;
+    private Toolbar toolbar;
 
     @Nullable
     @Override
@@ -69,6 +70,10 @@ public class MainFragment extends Fragment {
         debugText.setText(message);
     }
 
+    public void updateToolbarTitle(String title) {
+        toolbar.setTitle(title);
+    }
+
     private void resetViews() {
         invalidateSpeed(0);
         invalidateDistance(0);
@@ -84,6 +89,7 @@ public class MainFragment extends Fragment {
         averageSpeedText = (TextView) root.findViewById(R.id.average_value);
         maxSpeedText = (TextView) root.findViewById(R.id.max_speed_value);
         debugText = (TextView) root.findViewById(R.id.debug);
+        toolbar = (Toolbar) root.findViewById(R.id.toolbar);
 
         if (!new SettingsManager(getActivity()).isDebugMode()) {
             debugText.setVisibility(View.GONE);
