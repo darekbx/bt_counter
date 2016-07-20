@@ -6,8 +6,8 @@ BTCounter TODO:
 ```
 #!java
 
-Trasy:
-- ikonka
+TODO:
+- kasowanie trip przyciskiem
 - wykres prędkości jednej sesji
 - czas przejazdu w jednej sesji
 - dodanie trasy
