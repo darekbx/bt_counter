@@ -1,5 +1,5 @@
 const int refreshDelay = 1;
-const int cadenceValue = 2;
+const int cadenceValue = 200000;
 const int counterPin = 3;
 const int cadencePin = 4;
 const int stateLed = 5;
@@ -58,7 +58,7 @@ void handleCadence() {
   int cadenceButtonState = digitalRead(cadencePin);
   if (cadenceButtonState == HIGH && !isCadenceHigh) { 
     isCadenceHigh = true; 
-    Serial.write(cadenceValue);
+    writeBytes(cadenceValue);
     digitalWrite(stateLed, HIGH);
   } else if (isCadenceHigh && cadenceButtonState == LOW) { 
     isCadenceHigh = false;

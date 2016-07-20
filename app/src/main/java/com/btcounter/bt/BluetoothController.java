@@ -25,7 +25,7 @@ import rx.schedulers.Schedulers;
  */
 public class BluetoothController {
 
-    public static final int DATA_CADENCE = 2;
+    public static final int DATA_CADENCE = 200000;
 
     private boolean DEBUG = true;
 
@@ -179,8 +179,7 @@ public class BluetoothController {
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             super.onCharacteristicChanged(gatt, characteristic);
             float floatValue = characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT, 0);
-            int intValue = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT8, 0);
-            if (intValue == DATA_CADENCE) {
+            if ((int)floatValue == DATA_CADENCE) {
                 listener.onData(DATA_CADENCE);
             } else {
                 listener.onData((int)floatValue);
