@@ -1,18 +1,12 @@
 package com.btcounter;
 
-import android.os.SystemClock;
-
 import com.btcounter.bikelogic.MeasurementController;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-
-import java.io.IOException;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
