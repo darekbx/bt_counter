@@ -1,15 +1,15 @@
 
 fnValue = 50;
-cournersRound = 3;
+cournersRound = 2;
 mountLength = 140;
 mountHeight = 7.5;
+handlebarDiameter = 26;
 
 module singleMount(y) {
     translate([0, y, -3]) {
         minkowski() {
-            cube([mountLength, 12, mountHeight], true);
+            cube([mountLength, 14, mountHeight], true);
             sphere(cournersRound, $fn = fnValue);
-            
         }
     }
 }
@@ -53,19 +53,73 @@ module phone() {
     }
     
     translate([-35, 0, -3]) {
-        #cube([1, 1, 16], true);
+        %cube([1, 1, 16], true);
     }
     
     translate([-35, 0, 0]) {
-        #cube([1, 53, 1], true);
+        %cube([1, 53, 1], true);
     }
 }
 
-singleSideMount(-22);
-singleMount(0);
-singleSideMount(22);
-beams();
-beamEnd(27);
-beamEnd(-27);
+module mount() {
+    translate([-90, 0, -3]) {
+        difference() {
+            sphere(22, $fn = fnValue);
+            mountDiff();
+        }
+        
+        translate([15, -9, 2.2]) {
+            rotate([0, 14, 0]) { 
+                cube([25, 18, 8]);
+            }
+        }
+        
+    }    
+}
 
-phone();
+module mountDiff() {
+    translate([-2.5, -35, -35]){
+        cube([5, 70, 70]);
+    }
+    rotate([90, 90, 0]) {
+        translate([0, 0, -50]) {
+            cylinder(100, 13, 13, $fn = fnValue);
+        }
+    }
+    translate([-25, 9, -25]) {
+        cube([50, 20, 50]);
+    }
+    translate([-25, -29, -25]) {
+        cube([50, 20, 50]);
+    }
+    
+    screwHole(-16);
+    screwHole(16);
+}
+
+module screwHole(y) {
+    translate([-25, 0, y]) {
+        rotate([90, 0, 90]) {
+            cylinder(50, 2.5, 2.5, $fn = fnValue);
+            translate([0, 0, -5]) {
+                cylinder(20, 6, 6, $fn = fnValue);
+            }
+            translate([0, 0, 35]) {
+                cylinder(20, 6, 6, $fn = fnValue);
+            }
+        }
+    }
+}
+
+module model() render() { 
+    singleSideMount(-22);
+    singleMount(0);
+    singleSideMount(22);
+    beams();
+    beamEnd(27);
+    beamEnd(-27);
+    mount();
+}
+
+model();
+//phone();
