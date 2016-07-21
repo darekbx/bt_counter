@@ -38,10 +38,6 @@ public class MeasurementController {
         this.wheelSize = wheelSize;
     }
 
-    public void setListener(Listener listener) {
-        this.listener = listener;
-    }
-
     public void notifyWheelRotationTime(int timeDiff) {
         float speedMs = Measurement.speed(wheelSize, timeDiff);
         float speedKmH = Measurement.speedToKmH(speedMs);
@@ -69,6 +65,14 @@ public class MeasurementController {
             int cadence = Measurement.cadence(interval);
             listener.refreshCadence(cadence);
         }
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
+    }
+
+    public void setWheelSize(float wheelSize) {
+        this.wheelSize = wheelSize;
     }
 
     public float getDistance() {

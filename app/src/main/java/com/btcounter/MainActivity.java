@@ -127,6 +127,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SETTINGS_REQUEST) {
+            switch (resultCode) {
+                case SettingsActivity.TRIP_DISTANCE_RESULT:
+                    resetTripDistance();
+                    break;
+                case SettingsActivity.WHEEL_SIZE_RESULT:
+                    updateWheelSize();
+                    break;
+                case SettingsActivity.ODO_RESULT:
+                    resetOdo();
+                    break;
+                case SettingsActivity.MAX_SPEED_RESULT:
+                    updateMaxSpeed();
+                    break;
+            }
             // TODO: refresh app when settigs has changed
         }
     }
@@ -134,6 +148,30 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         showConfirmExitDialog();
+    }
+
+    private void resetTripDistance() {
+        float distance = settingsManager.getDistance();
+        invalidateDistance(distance);
+        if (measurementController != null) {
+            measurementController.setDistance(distance);
+        }
+    }
+
+    private void resetOdo() {
+        odo = settingsManager.getOdo();
+        invalidateOdo((int)odo);
+    }
+
+    private void updateWheelSize() {
+        if (measurementController != null) {
+            measurementController.setWheelSize(settingsManager.getWheelSize());
+        }
+    }
+
+    private void updateMaxSpeed() {
+        maxSpeed = settingsManager.getMaxSpeed();
+        invalidateMaxSpeed();
     }
 
     private void initializeDisplay() {

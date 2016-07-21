@@ -13,6 +13,15 @@ import com.btcounter.utils.FloatEditTextPreference;
  */
 public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
 
+    public interface Listener {
+        void onWheelSizeChanged();
+        void onTripDistanceChanged();
+        void onOdoChanged();
+        void onMaxSpeedChanged();
+    }
+
+    private Listener listener;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,6 +32,10 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         setOdoSummary();
         setMaxSpeedSummary();
         setTripDistanceSummary();
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     private void initListeners() {
@@ -88,12 +101,24 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         if (preference.getKey().equals(getString(R.string.settings_wheel_size_key))) {
             getWheelSizePreference().setSummary(String.valueOf(newValue));
+            if (listener != null) {
+                listener.onWheelSizeChanged();
+            }
         } else if (preference.getKey().equals(getString(R.string.settings_odo_key))) {
             getOdoPreference().setSummary(String.valueOf(newValue));
+            if (listener != null) {
+                listener.onOdoChanged();
+            }
         } else if (preference.getKey().equals(getString(R.string.settings_max_speed_key))) {
             getMaxSpeedPreference().setSummary(String.valueOf(newValue));
+            if (listener != null) {
+                listener.onMaxSpeedChanged();
+            }
         } else if (preference.getKey().equals(getString(R.string.settings_distance_key))) {
             getTripDistancePreference().setSummary(String.valueOf(newValue));
+            if (listener != null) {
+                listener.onTripDistanceChanged();
+            }
         }
         return true;
     }
