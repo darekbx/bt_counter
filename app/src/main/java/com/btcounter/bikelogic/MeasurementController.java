@@ -123,7 +123,7 @@ public class MeasurementController {
                 });
     }
 
-    private long getTime() {
+    protected long getTime() {
         return SystemClock.uptimeMillis();
     }
 }

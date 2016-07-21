@@ -1,5 +1,5 @@
 const int refreshDelay = 1;
-const int cadenceValue = 200000;
+const long cadenceValue = 200000;
 const int counterPin = 3;
 const int cadencePin = 4;
 const int stateLed = 5;
