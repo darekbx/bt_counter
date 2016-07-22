@@ -1,15 +1,10 @@
 package com.btcounter.utils;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.widget.Toast;
-
-import com.btcounter.R;
 
 /**
  * Created by daba on 2016-07-05.

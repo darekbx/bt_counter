@@ -2,6 +2,7 @@ package com.btcounter;
 
 import com.btcounter.bikelogic.MeasurementController;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +31,11 @@ public class MeasurementControllerTest {
         measurementController.setListener(listener);
     }
 
+    @After
+    public void destroy() {
+        measurementController.unsubscribe();
+    }
+
     @Test
     public void wheel_rotation() {
 
@@ -38,6 +44,31 @@ public class MeasurementControllerTest {
         verify(listener, times(1)).refreshSpeed(7.2f);
         verify(listener, times(1)).refreshDistance(0.002f);
         verify(listener, times(1)).refreshAverageSpeed(7.2f);
+        verify(measurementController, times(1)).delayedClean();
+        verify(measurementController, times(1)).subscribeTime();
+    }
+
+    @Test
+    public void delay_clean() throws InterruptedException {
+
+        measurementController.unsubscribe();
+        measurementController.notifyWheelRotationTime(1000);
+
+        Thread.sleep(2001);
+
+        verify(listener, times(1)).refreshSpeed(0);
+        verify(listener, times(1)).refreshCadence(0);
+    }
+
+    @Test
+    public void subscribe_time() throws InterruptedException {
+
+        measurementController.unsubscribe();
+        measurementController.notifyWheelRotationTime(1000);
+
+        Thread.sleep(1001);
+
+        verify(listener, times(1)).refreshTime(1);
     }
 
     @Test

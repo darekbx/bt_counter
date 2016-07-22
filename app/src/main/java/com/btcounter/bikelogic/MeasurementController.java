@@ -99,7 +99,7 @@ public class MeasurementController {
         listener.refreshAverageSpeed(averageSpeed);
     }
 
-    private void delayedClean() {
+    public void delayedClean() {
         if (subscription != null) {
             subscription.unsubscribe();
         }
