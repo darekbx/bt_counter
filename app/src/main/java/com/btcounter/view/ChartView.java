@@ -73,8 +73,8 @@ public class ChartView extends View {
     }
 
     private void initializePaintCadence() {
-        paintSpeed = new Paint();
-        paintSpeed.setAntiAlias(true);
-        paintSpeed.setColor(Color.YELLOW);
+        paintCadence = new Paint();
+        paintCadence.setAntiAlias(true);
+        paintCadence.setColor(Color.YELLOW);
     }
 }
