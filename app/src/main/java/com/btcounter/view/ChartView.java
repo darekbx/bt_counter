@@ -15,8 +15,10 @@ import java.util.ArrayList;
 /**
  * Created by daba on 2016-07-22.
  */
-
 public class ChartView extends View {
+
+    private static final float SPEED_MULTIPLER = 9;
+    private static final float CADENCE_MULTIPLER = 2;
 
     private ArrayList<ChartPair> data;
     private Paint paintSpeed;
@@ -42,39 +44,49 @@ public class ChartView extends View {
 
         super.onDraw(canvas);
 
-        // TODO extaract methods
-        float ratio = getWidth() / data.size();
+        float ratio = getRatio();
         float left = 0f;
 
-        PointF temp = null;
+        PointF tempSpeed = null;
+        PointF tempCadence = null;
 
+        // TODO extaract methods
         for (ChartPair pair : data) {
-            if (temp == null) {
-                temp = new PointF(left, getYPosition(pair.speed));
+            if (tempSpeed == null) {
+                tempSpeed = new PointF(left, getYPosition(pair.speed, SPEED_MULTIPLER));
+                tempCadence = new PointF(left, getYPosition(pair.cadence, CADENCE_MULTIPLER));
                 continue;
             }
 
-            canvas.drawLine(temp.x, temp.y, left,  getYPosition(pair.speed), paintSpeed);
+            canvas.drawLine(tempSpeed.x, tempSpeed.y, left,  getYPosition(pair.speed, SPEED_MULTIPLER), paintSpeed);
+            canvas.drawLine(tempCadence.x, tempCadence.y, left,  getYPosition(pair.cadence, CADENCE_MULTIPLER), paintCadence);
 
-            temp = new PointF(left,  getYPosition(pair.speed));
+            tempSpeed = new PointF(left, getYPosition(pair.speed, SPEED_MULTIPLER));
+            tempCadence = new PointF(left, getYPosition(pair.cadence, CADENCE_MULTIPLER));
 
             left += ratio;
         }
     }
 
-    private float getYPosition(float value) {
-        return getHeight() - (value * 5/* TODO Extract static final */);
+    private float getRatio() {
+        return (float)getWidth() / (float)data.size();
+    }
+
+    private float getYPosition(float value, float mulipler) {
+        return getHeight() - (value * mulipler);
     }
 
     private void initializePaintSpeed() {
         paintSpeed = new Paint();
         paintSpeed.setAntiAlias(true);
         paintSpeed.setColor(Color.WHITE);
+        paintSpeed.setStrokeWidth(2f);
     }
 
     private void initializePaintCadence() {
         paintCadence = new Paint();
         paintCadence.setAntiAlias(true);
         paintCadence.setColor(Color.YELLOW);
+        paintCadence.setStrokeWidth(2f);
     }
 }
