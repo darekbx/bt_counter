@@ -10,6 +10,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -54,7 +55,7 @@ public class MeasurementControllerTest {
         measurementController.unsubscribe();
         measurementController.notifyWheelRotationTime(1000);
 
-        Thread.sleep(2001);
+        Thread.sleep(2005);
 
         verify(listener, times(1)).refreshSpeed(0);
         verify(listener, times(1)).refreshCadence(0);
@@ -66,9 +67,19 @@ public class MeasurementControllerTest {
         measurementController.unsubscribe();
         measurementController.notifyWheelRotationTime(1000);
 
-        Thread.sleep(1001);
+        Thread.sleep(1005);
 
         verify(listener, times(1)).refreshTime(1);
+    }
+
+    @Test
+    public void unsubscribe_time() throws InterruptedException {
+
+        measurementController.unsubscribe();
+
+        Thread.sleep(1005);
+
+        verify(listener, never()).refreshTime(1);
     }
 
     @Test

@@ -14,8 +14,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.btcounter.bikelogic.ChartController;
 import com.btcounter.bikelogic.MeasurementController;
 import com.btcounter.bt.BluetoothController;
+import com.btcounter.fragments.ChartFragment;
 import com.btcounter.fragments.DrawerFragment;
 import com.btcounter.fragments.MainFragment;
 import com.btcounter.settings.SettingsManager;
@@ -38,9 +40,12 @@ public class MainActivity extends AppCompatActivity {
     private SettingsManager settingsManager;
     private BluetoothController bluetoothController;
     private MeasurementController measurementController;
+    private ChartController chartLogic;
     private PowerManager.WakeLock wakeLock;
+
     private MainFragment mainFragment;
     private DrawerFragment drawerFragment;
+    private ChartFragment chartFragment;
 
     private float odo;
     private float maxSpeed;
@@ -51,7 +56,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         addMainFragment();
         addDrawerFragment();
+        addChartFragment();
         initializeSettingsManager();
+        initializeChartLogic();
         resetSpeedText();
         checkPermissions();
         loadOdo();
@@ -103,6 +110,9 @@ public class MainActivity extends AppCompatActivity {
             measurementController.unsubscribe();
             measurementController.setListener(null);
         }
+        if (chartLogic != null) {
+            chartLogic.stopListening();
+        }
         saveOdo();
         saveDistance();
     }
@@ -141,13 +151,18 @@ public class MainActivity extends AppCompatActivity {
                     updateMaxSpeed();
                     break;
             }
-            // TODO: refresh app when settigs has changed
+            // TODO: refresh isDebug when settigs has changed
         }
     }
 
     @Override
     public void onBackPressed() {
         showConfirmExitDialog();
+    }
+
+    private void initializeChartLogic() {
+        chartLogic = new ChartController();
+        chartLogic.startListening();
     }
 
     private void resetTripDistance() {
@@ -204,6 +219,14 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.content_drawer, drawerFragment)
+                .commit();
+    }
+
+    private void addChartFragment() {
+        chartFragment = new ChartFragment();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.chart_frame, chartFragment)
                 .commit();
     }
 
@@ -277,6 +300,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void invalidateSpeed(float speed) {
+        if (isMainFragmentActive()) {
+            runOnUiThread(() -> mainFragment.invalidateSpeed(speed));
+        }
+    }
+
     private void invalidateMaxSpeed() {
         if (isMainFragmentActive()) {
             runOnUiThread(() -> mainFragment.invalidateMaxSpeed(maxSpeed));
@@ -330,17 +359,14 @@ public class MainActivity extends AppCompatActivity {
         maxSpeed = settingsManager.getMaxSpeed();
     }
 
-    // TOREMOVE
     public void onPrepareClick(View view) {
         prepareMeasurement();
     }
 
-    // TOREMOVE
     public void onTickClick(View view) {
         measurementController.notifyWheelRotationTime(new Random().nextInt(800) + 100);
     }
 
-    // TOREMOVE
     public void onCadenceTick(View view) {
         measurementController.notifyCrankRotation();
     }
@@ -405,9 +431,7 @@ public class MainActivity extends AppCompatActivity {
         measurementController.setListener(new MeasurementController.Listener() {
             @Override
             public void refreshSpeed(float speed) {
-                if (isMainFragmentActive()) {
-                    runOnUiThread(() -> mainFragment.invalidateSpeed(speed));
-                }
+                invalidateSpeed(speed);
                 updateMaxSpeed(speed);
             }
 
