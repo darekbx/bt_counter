@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
 
     private float odo;
     private float maxSpeed;
+    private float speed;
+    private float cadence;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -265,6 +267,10 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
         return drawerFragment != null && drawerFragment.isAdded();
     }
 
+    private boolean isChartFragmentActive() {
+        return chartFragment != null && chartFragment.isAdded();
+    }
+
     private void openSettings() {
         Intent settingsIntent = new Intent(this, SettingsActivity.class);
         startActivityForResult(settingsIntent, SETTINGS_REQUEST);
@@ -436,6 +442,7 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
             public void refreshSpeed(float speed) {
                 invalidateSpeed(speed);
                 updateMaxSpeed(speed);
+                MainActivity.this.speed = speed;
             }
 
             @Override
@@ -454,6 +461,7 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
                 if (isMainFragmentActive()) {
                     runOnUiThread(() -> mainFragment.invalidateCadence(cadence));
                 }
+                MainActivity.this.cadence = cadence;
             }
 
             @Override
@@ -465,12 +473,13 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
 
     @Override
     public ChartPair onCollect() {
-        // TODO
-        return null;
+        return new ChartPair(speed, cadence);
     }
 
     @Override
     public void onData(ArrayList<ChartPair> pairs) {
-        // TODO
+        if (isChartFragmentActive()) {
+            runOnUiThread(() -> chartFragment.notifyData(pairs));
+        }
     }
 }

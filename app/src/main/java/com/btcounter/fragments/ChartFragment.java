@@ -8,23 +8,28 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.btcounter.R;
+import com.btcounter.model.ChartPair;
+import com.btcounter.view.ChartView;
+
+import java.util.ArrayList;
 
 /**
  * Created by daba on 2016-07-22.
  */
 public class ChartFragment extends Fragment {
 
+    private ChartView chartView;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_chart, container, false);
-
-        return root;
+        chartView = (ChartView) inflater.inflate(R.layout.fragment_chart, container, false);
+        return chartView;
     }
 
-    public void notifySpeed(float speed) {
-    }
-
-    public void notifyCadence(int cadence) {
+    public void notifyData(ArrayList<ChartPair> data) {
+        if (chartView != null) {
+            chartView.invalidateChart(data);
+        }
     }
 }
