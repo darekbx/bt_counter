@@ -20,10 +20,12 @@ import com.btcounter.bt.BluetoothController;
 import com.btcounter.fragments.ChartFragment;
 import com.btcounter.fragments.DrawerFragment;
 import com.btcounter.fragments.MainFragment;
+import com.btcounter.model.ChartPair;
 import com.btcounter.settings.SettingsManager;
 import com.btcounter.utils.PermissionHelper;
 import com.btcounter.utils.TimeUtils;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import static com.btcounter.bt.BluetoothController.DATA_CADENCE;
@@ -31,7 +33,7 @@ import static com.btcounter.bt.BluetoothController.DATA_CADENCE;
 /**
  * Created by daba on 2016-06-01.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ChartController.Listener {
 
     private static final String TAG = MainActivity.class.getName();
     private static final int SETTINGS_REQUEST = 1;
@@ -162,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initializeChartLogic() {
         chartLogic = new ChartController();
+        chartLogic.setListener(this);
         chartLogic.startListening();
     }
 
@@ -458,5 +461,16 @@ public class MainActivity extends AppCompatActivity {
                 invalidateTime(time);
             }
         });
+    }
+
+    @Override
+    public ChartPair onCollect() {
+        // TODO
+        return null;
+    }
+
+    @Override
+    public void onData(ArrayList<ChartPair> pairs) {
+        // TODO
     }
 }
