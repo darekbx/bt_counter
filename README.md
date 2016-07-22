@@ -7,9 +7,6 @@ BTCounter TODO:
 #!java
 
 TODO:
-- naprawa kadencji - modyfikacja Bluno tak żeby dla prędkości i kadencji wysyłało dane w tym samym formacie
-- odświeżanie głównego ekranu po zmianie wartości z settings
-- wykres prędkości jednej sesji
 - dodanie trasy
 - wybór trasy
 - punkty trasy:
