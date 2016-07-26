@@ -41,31 +41,40 @@ public class ChartView extends View {
         if (data == null) {
             return;
         }
-
         super.onDraw(canvas);
+        drawChart(canvas);
+    }
 
+    private void drawChart(Canvas canvas) {
         float ratio = getRatio();
         float left = 0f;
-
         PointF tempSpeed = null;
         PointF tempCadence = null;
 
-        // TODO extaract methods
         for (ChartPair pair : data) {
             if (tempSpeed == null) {
-                tempSpeed = new PointF(left, getYPosition(pair.speed, SPEED_MULTIPLER));
-                tempCadence = new PointF(left, getYPosition(pair.cadence, CADENCE_MULTIPLER));
+                tempSpeed = createPoint(left, pair, true);
+                tempCadence = createPoint(left, pair, false);
                 continue;
             }
 
-            canvas.drawLine(tempSpeed.x, tempSpeed.y, left,  getYPosition(pair.speed, SPEED_MULTIPLER), paintSpeed);
-            canvas.drawLine(tempCadence.x, tempCadence.y, left,  getYPosition(pair.cadence, CADENCE_MULTIPLER), paintCadence);
+            PointF positionSpeed = createPoint(left, pair,  true);
+            PointF positionCadence = createPoint(left, pair,  false);
+            canvas.drawLine(tempSpeed.x, tempSpeed.y, positionSpeed.x, positionSpeed.y, paintSpeed);
+            canvas.drawLine(tempCadence.x, tempCadence.y, positionCadence.x, positionCadence.y, paintCadence);
 
-            tempSpeed = new PointF(left, getYPosition(pair.speed, SPEED_MULTIPLER));
-            tempCadence = new PointF(left, getYPosition(pair.cadence, CADENCE_MULTIPLER));
+            tempSpeed = createPoint(left, pair, true);
+            tempCadence = createPoint(left, pair, false);
 
             left += ratio;
         }
+    }
+
+    private PointF createPoint(float left, ChartPair pair, boolean isSpeed) {
+        return new PointF(left,
+                getYPosition(
+                    isSpeed ? pair.speed : pair.cadence,
+                    isSpeed ? SPEED_MULTIPLER : CADENCE_MULTIPLER));
     }
 
     private float getRatio() {
@@ -86,7 +95,7 @@ public class ChartView extends View {
     private void initializePaintCadence() {
         paintCadence = new Paint();
         paintCadence.setAntiAlias(true);
-        paintCadence.setColor(Color.YELLOW);
+        paintCadence.setColor(Color.GRAY);
         paintCadence.setStrokeWidth(2f);
     }
 }

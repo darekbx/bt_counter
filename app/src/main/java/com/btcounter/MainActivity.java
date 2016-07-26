@@ -167,7 +167,6 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
     private void initializeChartLogic() {
         chartLogic = new ChartController();
         chartLogic.setListener(this);
-        chartLogic.startListening();
     }
 
     private void resetTripDistance() {
@@ -368,14 +367,17 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
         maxSpeed = settingsManager.getMaxSpeed();
     }
 
+    // Debug button
     public void onPrepareClick(View view) {
         prepareMeasurement();
     }
 
+    // Debug button
     public void onTickClick(View view) {
         measurementController.notifyWheelRotationTime(new Random().nextInt(800) + 100);
     }
 
+    // Debug button
     public void onCadenceTick(View view) {
         measurementController.notifyCrankRotation();
     }
@@ -388,6 +390,10 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
         if (bluetoothController != null) {
             bluetoothController.stopScan();
             bluetoothController.closeGatt();
+        }
+        if (chartLogic != null) {
+            chartLogic.setListener(null);
+            chartLogic.stopListening();
         }
     }
 
@@ -469,6 +475,7 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
                 invalidateTime(time);
             }
         });
+        chartLogic.startListening();
     }
 
     @Override

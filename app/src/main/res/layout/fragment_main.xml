@@ -48,7 +48,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginTop="-12dp"
         android:layout_marginRight="10dp"
-        android:textSize="52sp"
+        android:textSize="48sp"
         android:typeface="monospace"
         />
 
@@ -60,7 +60,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginTop="-12dp"
         android:layout_marginRight="-7dp"
-        android:textSize="52sp"
+        android:textSize="48sp"
         android:typeface="monospace"
         />
 
