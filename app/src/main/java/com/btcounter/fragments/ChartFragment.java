@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.btcounter.R;
 import com.btcounter.model.ChartPair;
-import com.btcounter.view.ChartView;
+import com.btcounter.chart.ChartView;
 
 import java.util.ArrayList;
 

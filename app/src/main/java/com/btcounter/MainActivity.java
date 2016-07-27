@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
         }
         if (chartLogic != null) {
             chartLogic.stopListening();
+            chartLogic.setListener(null);
         }
         saveOdo();
         saveDistance();
@@ -392,8 +393,10 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
             bluetoothController.closeGatt();
         }
         if (chartLogic != null) {
-            chartLogic.setListener(null);
             chartLogic.stopListening();
+        }
+        if (measurementController != null) {
+            measurementController.unsubscribe();
         }
     }
 
