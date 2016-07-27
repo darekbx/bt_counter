@@ -22,7 +22,7 @@ public class ChartDrawer {
     private static final float SPEED_MULTIPLER = 9;
     private static final float CADENCE_MULTIPLER = 2;
 
-    private ArrayList<ChartPair> data;
+    private final ArrayList<ChartPair> data = new ArrayList<>();
     private Paint paintSpeed;
     private Paint paintCadence;
     private Listener listener;
@@ -39,32 +39,37 @@ public class ChartDrawer {
         this.paintCadence = paintCadence;
     }
 
-    public void setData(ArrayList<ChartPair> data) {
-        this.data = data;
+    public void setData(ArrayList<ChartPair> chartPairs) {
+        synchronized (this.data) {
+            this.data.clear();
+            this.data.addAll(chartPairs);
+        }
     }
 
     public void drawChart(Canvas canvas) {
-        float ratio = getRatio();
-        float left = 0f;
-        PointF tempSpeed = null;
-        PointF tempCadence = null;
+        synchronized (this.data) {
+            float ratio = getRatio();
+            float left = 0f;
+            PointF tempSpeed = null;
+            PointF tempCadence = null;
 
-        for (ChartPair pair : data) {
-            if (tempSpeed == null) {
+            for (ChartPair pair : data) {
+                if (tempSpeed == null) {
+                    tempSpeed = createPoint(left, pair, true);
+                    tempCadence = createPoint(left, pair, false);
+                    continue;
+                }
+
+                PointF positionSpeed = createPoint(left, pair, true);
+                PointF positionCadence = createPoint(left, pair, false);
+                drawLine(canvas, tempSpeed, positionSpeed, paintSpeed);
+                drawLine(canvas, tempCadence, positionCadence, paintCadence);
+
                 tempSpeed = createPoint(left, pair, true);
                 tempCadence = createPoint(left, pair, false);
-                continue;
+
+                left += ratio;
             }
-
-            PointF positionSpeed = createPoint(left, pair,  true);
-            PointF positionCadence = createPoint(left, pair,  false);
-            drawLine(canvas, tempSpeed, positionSpeed, paintSpeed);
-            drawLine(canvas, tempCadence, positionCadence, paintCadence);
-
-            tempSpeed = createPoint(left, pair, true);
-            tempCadence = createPoint(left, pair, false);
-
-            left += ratio;
         }
     }
 

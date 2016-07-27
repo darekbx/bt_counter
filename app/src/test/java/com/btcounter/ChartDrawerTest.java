@@ -1,6 +1,5 @@
 package com.btcounter;
 
-import android.graphics.Canvas;
 import android.graphics.PointF;
 
 import com.btcounter.chart.ChartDrawer;
