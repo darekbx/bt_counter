@@ -75,7 +75,7 @@ public class ChartDrawer {
 
     public void drawLine(Canvas canvas, PointF a, PointF b, Paint paint) {
         if (canvas != null) {
-            canvas.drawLine(a.x, a.y, b.x, b.y, paintSpeed);
+            canvas.drawLine(a.x, a.y, b.x, b.y, paint);
         }
     }
 
