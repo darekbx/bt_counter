@@ -7,9 +7,12 @@ handlebarDiameter = 26;
 
 module singleMount(y) {
     translate([0, y, -3]) {
-        minkowski() {
-            cube([mountLength, 14, mountHeight], true);
-            sphere(cournersRound, $fn = fnValue);
+        difference() {
+            minkowski() {
+                cube([mountLength, 14, mountHeight], true);
+                sphere(cournersRound, $fn = fnValue);
+            }
+            ladderMount();
         }
     }
 }
@@ -111,13 +114,33 @@ module screwHole(y) {
     }
 }
 
+module ladder() {
+    translate([0, -60, 1]) {
+        singleSideMount(-22);
+        beams();
+        beamEnd(27);
+        beamEnd(-27);
+        singleSideMount(22);
+    }
+}
+
+module ladderMount() {
+    translate([0, 0, 4.5]) {
+        for (a =[0:3]) {
+            translate([65 - (a * 30), 0, 0]) {
+                minkowski() {
+                    cube([1.25, 44, 1], true);
+                    sphere(2, $fn = fnValue);
+                }
+            }
+        } 
+     }
+}
+
 module model() render() { 
-    singleSideMount(-22);
     singleMount(0);
-    singleSideMount(22);
-    beams();
-    beamEnd(27);
-    beamEnd(-27);
+    ladder();
+    
     mount();
 }
 

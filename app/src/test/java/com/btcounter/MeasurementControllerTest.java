@@ -9,6 +9,8 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -47,6 +49,14 @@ public class MeasurementControllerTest {
         verify(listener, times(1)).refreshAverageSpeed(7.2f);
         verify(measurementController, times(1)).delayedClean();
         verify(measurementController, times(1)).subscribeTime();
+    }
+
+    @Test
+    public void update_average() {
+
+        measurementController.updateAverage(10f);
+
+        verify(listener, times(1)).refreshAverageSpeed(10f);
     }
 
     @Test
@@ -89,6 +99,18 @@ public class MeasurementControllerTest {
         measurementController.notifyCrankRotation();
 
         verify(listener, times(1)).refreshCadence(600);
+    }
+
+    @Test
+    public void check_for_edge_values() {
+
+        assertFalse(measurementController.checkForEdgeValues(0));
+        assertFalse(measurementController.checkForEdgeValues(100));
+        assertTrue(measurementController.checkForEdgeValues(40));
+
+        measurementController.notifyWheelRotationTime(10);
+
+        verify(listener, times(0)).refreshSpeed(1f);
     }
 
     private class MeasurementControllerMock extends MeasurementController {

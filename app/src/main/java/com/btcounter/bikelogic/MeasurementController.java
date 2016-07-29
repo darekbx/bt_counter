@@ -22,6 +22,7 @@ public class MeasurementController {
 
     private static final int CLEAN_DELAY = 2;
     private static final int TIME_DELAY = 1;
+    private static final float EDGE_SPEED = 80f;
 
     private Listener listener;
     private Subscription subscription;
@@ -41,16 +42,18 @@ public class MeasurementController {
     public void notifyWheelRotationTime(int timeDiff) {
         float speedMs = Measurement.speed(wheelSize, timeDiff);
         float speedKmH = Measurement.speedToKmH(speedMs);
-        listener.refreshSpeed(speedKmH);
+        if (checkForEdgeValues(speedKmH)) {
+            listener.refreshSpeed(speedKmH);
 
-        distance += Measurement.distanceToKilometers(wheelSize);
-        listener.refreshDistance(distance);
+            distance += Measurement.distanceToKilometers(wheelSize);
+            listener.refreshDistance(distance);
 
-        updateAverage(speedKmH);
-        delayedClean();
+            updateAverage(speedKmH);
+            delayedClean();
 
-        if (timeSubscription == null) {
-            subscribeTime();
+            if (timeSubscription == null) {
+                subscribeTime();
+            }
         }
     }
 
@@ -92,7 +95,11 @@ public class MeasurementController {
         }
     }
 
-    private void updateAverage(float speed) {
+    public boolean checkForEdgeValues(float speedKmH) {
+        return speedKmH > 0 && speedKmH < EDGE_SPEED;
+    }
+
+    public void updateAverage(float speed) {
         averageSum += speed;
         averageCount++;
         float averageSpeed = averageSum / averageCount;
