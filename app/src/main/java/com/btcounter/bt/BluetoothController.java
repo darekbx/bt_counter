@@ -145,12 +145,20 @@ public class BluetoothController {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             super.onConnectionStateChange(gatt, status, newState);
-            if (newState == BluetoothProfile.STATE_CONNECTING) {
-                log("GATT is connecting");
-            }
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
-                log("GATT is connected");
-                gatt.discoverServices();
+            switch (newState) {
+                case BluetoothProfile.STATE_CONNECTING:
+                    log("GATT is connecting");
+                    break;
+                case BluetoothProfile.STATE_CONNECTED:
+                    log("GATT is connected");
+                    gatt.discoverServices();
+                    break;
+                case BluetoothProfile.STATE_DISCONNECTING:
+                    log("GATT is DISCONNECTING");
+                    break;
+                case BluetoothProfile.STATE_DISCONNECTED:
+                    log("GATT is DISCONNECTED");
+                    break;
             }
         }
 

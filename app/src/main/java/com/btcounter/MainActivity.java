@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
     private float maxSpeed;
     private float speed;
     private float cadence;
+    private boolean redrawDrawer = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +124,21 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if (redrawDrawer) {
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .detach(drawerFragment)
+                    .attach(drawerFragment)
+                    .commit();
+
+            redrawDrawer = false;
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (wakeLock != null) {
@@ -155,8 +171,10 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
                 case SettingsActivity.MAX_SPEED_RESULT:
                     updateMaxSpeed();
                     break;
+                case SettingsActivity.DEBUG_RESULT:
+                    redrawDrawer = true;
+                    break;
             }
-            // TODO: refresh isDebug when settigs has changed
         }
     }
 
@@ -398,6 +416,7 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
         if (measurementController != null) {
             measurementController.unsubscribe();
         }
+        saveDistance();
     }
 
     private void startScan() {

@@ -1,6 +1,7 @@
 package com.btcounter.fragments;
 
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
@@ -18,6 +19,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         void onTripDistanceChanged();
         void onOdoChanged();
         void onMaxSpeedChanged();
+        void onDebugChanged();
     }
 
     private Listener listener;
@@ -43,6 +45,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         getOdoPreference().setOnPreferenceChangeListener(this);
         getMaxSpeedPreference().setOnPreferenceChangeListener(this);
         getTripDistancePreference().setOnPreferenceChangeListener(this);
+        getDebugPreference().setOnPreferenceChangeListener(this);
     }
 
     private void setWheelSizeSummary() {
@@ -79,6 +82,11 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     private FloatEditTextPreference getTripDistancePreference() {
         return (FloatEditTextPreference)
                 findPreference(getString(R.string.settings_distance_key));
+    }
+
+    private CheckBoxPreference getDebugPreference() {
+        return (CheckBoxPreference)
+                findPreference(getString(R.string.settings_debug_mode_key));
     }
 
     private float getWheelSize() {
@@ -118,6 +126,10 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             getTripDistancePreference().setSummary(String.valueOf(newValue));
             if (listener != null) {
                 listener.onTripDistanceChanged();
+            }
+        } else if (preference.getKey().equals(getString(R.string.settings_debug_mode_key))) {
+            if (listener != null) {
+                listener.onDebugChanged();
             }
         }
         return true;

@@ -14,6 +14,7 @@ public class SettingsActivity extends Activity implements SettingsFragment.Liste
     public static final int WHEEL_SIZE_RESULT = 2;
     public static final int ODO_RESULT = 3;
     public static final int MAX_SPEED_RESULT = 4;
+    public static final int DEBUG_RESULT = 5;
 
     private SettingsFragment fragment;
 
@@ -46,5 +47,10 @@ public class SettingsActivity extends Activity implements SettingsFragment.Liste
     @Override
     public void onMaxSpeedChanged() {
         setResult(MAX_SPEED_RESULT);
+    }
+
+    @Override
+    public void onDebugChanged() {
+        setResult(DEBUG_RESULT);
     }
 }

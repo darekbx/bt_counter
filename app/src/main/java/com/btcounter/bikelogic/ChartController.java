@@ -46,8 +46,10 @@ public class ChartController {
     }
 
     protected void tick() {
-        ChartPair pair = listener.onCollect();
-        data.add(pair);
-        listener.onData(data);
+        if (listener != null) {
+            ChartPair pair = listener.onCollect();
+            data.add(pair);
+            listener.onData(data);
+        }
     }
 }
