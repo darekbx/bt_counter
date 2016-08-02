@@ -27,8 +27,6 @@ public class BluetoothController {
 
     public static final int DATA_CADENCE = 200000;
 
-    private boolean DEBUG = true;
-
     private static final String BT_DEVICE_NAME = "BlunoV1.8";
     private static final String BT_SERVICE = "0000dfb0-0000-1000-8000-00805f9b34fb";
     private static final String BT_CHARACTERISTICS = "0000dfb1-0000-1000-8000-00805f9b34fb";
@@ -101,7 +99,7 @@ public class BluetoothController {
     }
 
     private void log(String message) {
-        if (DEBUG) {
+        if (isDebug) {
             listener.log(message);
         }
     }
@@ -202,60 +200,62 @@ public class BluetoothController {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             super.onCharacteristicChanged(gatt, characteristic);
-            float floatValue = characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT, 0);
-            if ((int)floatValue == DATA_CADENCE) {
-                listener.onData(DATA_CADENCE);
-            } else {
-                listener.onData((int)floatValue);
-            }
-            if (isDebug) {
-                debugCharacteristic(characteristic);
-            }
-        }
-
-        private void debugCharacteristic(BluetoothGattCharacteristic characteristic) {
-            float floatValue = characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT, 0);
-            float sFloatValue = characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_SFLOAT, 0);
-
-            int sInt8Value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT8, 0);
-            int sInt16Value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT16, 0);
-            int sInt32Value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT32, 0);
-
-            int uInt8Value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
-            int uInt16Value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 0);
-            int uInt32Value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT32, 0);
-
-            String stringValue = characteristic.getStringValue(0);
-            byte[] byteValue = characteristic.getValue();
-
-            StringBuilder byteString = new StringBuilder();
-            if (byteValue != null) {
-                for (int i = 0, count = byteValue.length; i < count; i++) {
-                    byteString.append(byteValue[i]).append(',');
-                }
-            }
-
-            final String newLine = "\n";
-            StringBuilder messageBuilder = new StringBuilder();
-            messageBuilder
-                    .append("FLOAT: ").append(floatValue).append(newLine)
-                    .append("SFLOAT: ").append(sFloatValue).append(newLine)
-
-                    .append("SINT8: ").append(sInt8Value).append(newLine)
-                    .append("SINT16: ").append(sInt16Value).append(newLine)
-                    .append("SINT32: ").append(sInt32Value).append(newLine)
-
-                    .append("UINT8: ").append(uInt8Value).append(newLine)
-                    .append("UINT16: ").append(uInt16Value).append(newLine)
-                    .append("UINT32: ").append(uInt32Value).append(newLine)
-
-                    .append("STRING: ").append(stringValue).append(newLine)
-
-                    .append("BYTE: ").append(byteString.toString());
-
-            if (listener != null) {
-                listener.onDebug(messageBuilder.toString());
-            }
+            distributeCharacteristic(characteristic);
         }
     };
+
+    public void distributeCharacteristic(BluetoothGattCharacteristic characteristic) {
+        float floatValue = characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT, 0);
+        if ((int)floatValue == DATA_CADENCE) {
+            listener.onData(DATA_CADENCE);
+        } else {
+            listener.onData((int)floatValue);
+        }
+        if (isDebug) {
+            debugCharacteristic(characteristic);
+        }
+    }
+
+    private void debugCharacteristic(BluetoothGattCharacteristic characteristic) {
+        float floatValue = characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT, 0);
+        float sFloatValue = characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_SFLOAT, 0);
+
+        int sInt8Value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT8, 0);
+        int sInt16Value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT16, 0);
+        int sInt32Value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT32, 0);
+
+        int uInt8Value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
+        int uInt16Value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 0);
+        int uInt32Value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT32, 0);
+
+        String stringValue = characteristic.getStringValue(0);
+        byte[] byteValue = characteristic.getValue();
+
+        StringBuilder byteString = new StringBuilder();
+        if (byteValue != null) {
+            for (int i = 0, count = byteValue.length; i < count; i++) {
+                byteString.append(byteValue[i]).append(',');
+            }
+        }
+
+        final String newLine = "\n";
+        StringBuilder messageBuilder = new StringBuilder();
+        messageBuilder
+                .append("FLOAT: ").append(floatValue).append(newLine)
+                .append("SFLOAT: ").append(sFloatValue).append(newLine)
+
+                .append("SINT8: ").append(sInt8Value).append(newLine)
+                .append("SINT16: ").append(sInt16Value).append(newLine)
+                .append("SINT32: ").append(sInt32Value).append(newLine)
+
+                .append("UINT8: ").append(uInt8Value).append(newLine)
+                .append("UINT16: ").append(uInt16Value).append(newLine)
+                .append("UINT32: ").append(uInt32Value).append(newLine)
+
+                .append("BYTE: ").append(byteString.toString());
+
+        if (listener != null) {
+            listener.onDebug(messageBuilder.toString());
+        }
+    }
 }
