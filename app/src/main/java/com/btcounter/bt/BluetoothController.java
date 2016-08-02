@@ -46,6 +46,7 @@ public class BluetoothController {
     private BluetoothGatt gatt;
     private Listener listener;
     private boolean isDebug;
+    private boolean isScanStartedByUser = false;
 
     public BluetoothController(Context context) {
         this.context = context;
@@ -57,6 +58,11 @@ public class BluetoothController {
 
     public void setIsDebug(boolean isDebug) {
         this.isDebug = isDebug;
+    }
+
+    public void startScanByUser() {
+        isScanStartedByUser = true;
+        startScan();
     }
 
     public void startScan() {
@@ -74,6 +80,11 @@ public class BluetoothController {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe((Object o) -> log("Start scanning"));
         }
+    }
+
+    public void stopScanByUser() {
+        isScanStartedByUser = false;
+        stopScan();
     }
 
     public void stopScan() {
@@ -154,10 +165,15 @@ public class BluetoothController {
                     gatt.discoverServices();
                     break;
                 case BluetoothProfile.STATE_DISCONNECTING:
-                    log("GATT is DISCONNECTING");
+                    log("GATT is disconnecting");
                     break;
                 case BluetoothProfile.STATE_DISCONNECTED:
-                    log("GATT is DISCONNECTED");
+                    if (isScanStartedByUser) {
+                        log("GATT is disconnected, retrying...");
+                        startScan();
+                    } else {
+                        log("GATT is disconnected");
+                    }
                     break;
             }
         }

@@ -87,6 +87,10 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
             case R.id.action_settings:
                 openSettings();
                 return true;
+            case R.id.action_add_route:
+                return true;
+            case R.id.action_routes_list:
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -107,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
     protected void onDestroy() {
         super.onDestroy();
         if (bluetoothController != null) {
-            bluetoothController.stopScan();
+            bluetoothController.stopScanByUser();
             bluetoothController.closeGatt();
             bluetoothController.setListener(null);
         }
@@ -407,7 +411,7 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
 
     public void onStopClick(View view) {
         if (bluetoothController != null) {
-            bluetoothController.stopScan();
+            bluetoothController.stopScanByUser();
             bluetoothController.closeGatt();
         }
         if (chartLogic != null) {
@@ -458,7 +462,7 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
                 }
             }
         });
-        bluetoothController.startScan();
+        bluetoothController.startScanByUser();
     }
 
     private void prepareMeasurement() {

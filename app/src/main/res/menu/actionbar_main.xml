@@ -6,4 +6,12 @@
         android:id="@+id/action_settings"
         android:title="@string/menu_settings"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_add_route"
+        android:title="@string/menu_add_route"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_routes_list"
+        android:title="@string/menu_routes_list"
+        app:showAsAction="never"/>
 </menu>
