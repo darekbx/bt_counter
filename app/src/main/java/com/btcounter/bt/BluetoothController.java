@@ -99,9 +99,7 @@ public class BluetoothController {
     }
 
     private void log(String message) {
-        if (isDebug) {
-            listener.log(message);
-        }
+        listener.log(message);
     }
 
     private ScanCallback scanCallback = new ScanCallback() {

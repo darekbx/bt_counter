@@ -82,10 +82,6 @@ public class MeasurementController {
         return distance;
     }
 
-    public void setDistance(float distance) {
-        this.distance = distance;
-    }
-
     public void unsubscribe() {
         if (subscription != null) {
             subscription.unsubscribe();

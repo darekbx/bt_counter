@@ -21,6 +21,10 @@
     <string name="max_speed">Max speed</string>
     <string name="session_time">Session time: </string>
 
+    <string name="button_add">Add</string>
+    <string name="hint_name">Name</string>
+    <string name="hint_distance">Distance</string>
+
     <string name="settings_odo_key">odo_key</string>
     <string name="settings_odo">ODO</string>
     <string name="settings_debug_mode_key">debug_key</string>

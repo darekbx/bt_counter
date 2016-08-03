@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
     private ChartFragment chartFragment;
 
     private float odo;
+    private float trip;
     private float maxSpeed;
     private float speed;
     private float cadence;
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
         checkPermissions();
         loadOdo();
         loadMaxSpeed();
+        loadTrip();
         keepScreenOnAndDim();
 
         if (!isWheelSizeSettingValid()) {
@@ -88,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
                 openSettings();
                 return true;
             case R.id.action_add_route:
+                startActivity(new Intent(this, AddRouteActivity.class));
                 return true;
             case R.id.action_routes_list:
                 return true;
@@ -193,11 +196,8 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
     }
 
     private void resetTripDistance() {
-        float distance = settingsManager.getDistance();
-        invalidateDistance(distance);
-        if (measurementController != null) {
-            measurementController.setDistance(distance);
-        }
+        trip = settingsManager.getDistance();
+        invalidateDistance(trip);
     }
 
     private void resetOdo() {
@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
             invalidateOdo((int) odo);
             invalidateMaxSpeed();
             invalidateAverageSpeed(0);
-            invalidateDistance(settingsManager.getDistance());
+            invalidateDistance(0);
         }
     }
 
@@ -321,7 +321,7 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
 
     private void saveDistance() {
         if (measurementController != null) {
-            settingsManager.saveDistance(measurementController.getDistance());
+            settingsManager.saveDistance(trip + measurementController.getDistance());
         }
     }
 
@@ -351,7 +351,7 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
 
     private void invalidateDistance(float distance) {
         if (isMainFragmentActive()) {
-            runOnUiThread(() -> mainFragment.invalidateDistance(distance));
+            runOnUiThread(() -> mainFragment.invalidateDistance(trip + distance));
         }
     }
 
@@ -388,6 +388,10 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
 
     private void loadMaxSpeed() {
         maxSpeed = settingsManager.getMaxSpeed();
+    }
+
+    private void loadTrip() {
+        trip = settingsManager.getDistance();
     }
 
     // Debug button
@@ -468,7 +472,6 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
     private void prepareMeasurement() {
         float wheelSize = getWheelSize();
         measurementController = new MeasurementController(wheelSize);
-        measurementController.setDistance(settingsManager.getDistance());
         measurementController.setListener(new MeasurementController.Listener() {
             @Override
             public void refreshSpeed(float speed) {
