@@ -2,14 +2,14 @@
 fnValue = 50;
 cournersRound = 2;
 mountLength = 140;
-mountHeight = 7.5;
+mountHeight = 8.5;
 handlebarDiameter = 26;
 
 module singleMount(y) {
     translate([0, y, -3]) {
         difference() {
             minkowski() {
-                cube([mountLength, 14, mountHeight], true);
+                cube([mountLength, 16, mountHeight], true);
                 sphere(cournersRound, $fn = fnValue);
             }
             ladderMount();
@@ -20,7 +20,7 @@ module singleMount(y) {
 module singleSideMount(y) {
     translate([20, y, 0]) {
         minkowski() {
-            cube([mountLength - 40, 3, 2], true);
+            cube([mountLength - 40, 7, 5], true);
             sphere(cournersRound, $fn = fnValue);
         }
     }
@@ -38,7 +38,7 @@ module singleBeam(x) {
 module beamEnd(x) {
     translate([69.5, x, 0]) {
         minkowski() {
-            cube([1, 10, 2], true);
+            cube([1, 14, 5], true);
             sphere(cournersRound, $fn = fnValue);
         }
     }
@@ -71,9 +71,9 @@ module mount() {
             mountDiff();
         }
         
-        translate([15, -9, 2.2]) {
-            rotate([0, 14, 0]) { 
-                cube([25, 18, 8]);
+        translate([15, -10, 1.2]) {
+            rotate([0, 12, 0]) { 
+                cube([25, 20, 8]);
             }
         }
         
@@ -89,10 +89,10 @@ module mountDiff() {
             cylinder(100, 13, 13, $fn = fnValue);
         }
     }
-    translate([-25, 9, -25]) {
+    translate([-25, 10, -25]) {
         cube([50, 20, 50]);
     }
-    translate([-25, -29, -25]) {
+    translate([-25, -30, -25]) {
         cube([50, 20, 50]);
     }
     
@@ -108,7 +108,7 @@ module screwHole(y) {
                 cylinder(20, 6, 6, $fn = fnValue);
             }
             translate([0, 0, 35]) {
-                cylinder(20, 6, 6, $fn = fnValue);
+                cylinder(20, 7, 7, $fn = fnValue);
             }
         }
     }
@@ -118,18 +118,34 @@ module ladder() {
     translate([0, -60, 1]) {
         singleSideMount(-22);
         beams();
-        beamEnd(27);
+        difference() {
+            singleSideMount(32);
+            singleSideMountHoles();
+        }
         beamEnd(-27);
-        singleSideMount(22);
+        beamEnd(37);
+    }
+}
+
+module singleSideMountHoles() {
+    translate([0, 6, 0]) {
+        for (a =[0:3]) {
+            translate([65 - (a * 30), 0, 0]) {
+                minkowski() {
+                    cube([1.2, 44, 1.2], true);
+                    sphere(2, $fn = fnValue);
+                }
+            }
+        }
     }
 }
 
 module ladderMount() {
-    translate([0, 0, 4.5]) {
+    translate([0, 0, 0]) {
         for (a =[0:3]) {
             translate([65 - (a * 30), 0, 0]) {
                 minkowski() {
-                    cube([1.25, 44, 1], true);
+                    cube([1.25, 44, 1.25], true);
                     sphere(2, $fn = fnValue);
                 }
             }

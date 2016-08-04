@@ -20,7 +20,6 @@ import com.btcounter.bt.BluetoothController;
 import com.btcounter.fragments.ChartFragment;
 import com.btcounter.fragments.DrawerFragment;
 import com.btcounter.fragments.MainFragment;
-import com.btcounter.model.ChartPair;
 import com.btcounter.settings.SettingsManager;
 import com.btcounter.utils.PermissionHelper;
 import com.btcounter.utils.TimeUtils;
@@ -508,14 +507,14 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
     }
 
     @Override
-    public ChartPair onCollect() {
-        return new ChartPair(speed, cadence);
+    public float onCollect() {
+        return speed;
     }
 
     @Override
-    public void onData(ArrayList<ChartPair> pairs) {
+    public void onData(ArrayList<Float> data) {
         if (isChartFragmentActive()) {
-            runOnUiThread(() -> chartFragment.notifyData(pairs));
+            runOnUiThread(() -> chartFragment.notifyData(data));
         }
     }
 }

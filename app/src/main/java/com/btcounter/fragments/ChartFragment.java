@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.btcounter.R;
-import com.btcounter.model.ChartPair;
 import com.btcounter.chart.ChartView;
 
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public class ChartFragment extends Fragment {
         return chartView;
     }
 
-    public void notifyData(ArrayList<ChartPair> data) {
+    public void notifyData(ArrayList<Float> data) {
         if (chartView != null) {
             chartView.invalidateChart(data);
         }

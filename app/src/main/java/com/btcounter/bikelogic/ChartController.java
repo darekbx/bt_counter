@@ -1,7 +1,5 @@
 package com.btcounter.bikelogic;
 
-import com.btcounter.model.ChartPair;
-
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -14,8 +12,8 @@ import rx.Subscription;
 public class ChartController {
 
     public interface Listener {
-        ChartPair onCollect();
-        void onData(ArrayList<ChartPair> pairs);
+        float onCollect();
+        void onData(ArrayList<Float> data);
     }
 
     private static final int TIME_DELAY = 1;
@@ -23,7 +21,7 @@ public class ChartController {
     private Subscription repeatSubscription;
     private Listener listener;
 
-    private ArrayList<ChartPair> data = new ArrayList<>();
+    private ArrayList<Float> data = new ArrayList<>();
 
     public void startListening() {
         repeatSubscription = Observable
@@ -47,8 +45,8 @@ public class ChartController {
 
     protected void tick() {
         if (listener != null) {
-            ChartPair pair = listener.onCollect();
-            data.add(pair);
+            Float value = listener.onCollect();
+            data.add(value);
             listener.onData(data);
         }
     }

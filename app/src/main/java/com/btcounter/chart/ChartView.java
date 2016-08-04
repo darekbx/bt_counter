@@ -7,8 +7,6 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.btcounter.model.ChartPair;
-
 import java.util.ArrayList;
 
 /**
@@ -21,12 +19,11 @@ public class ChartView extends View implements ChartDrawer.Listener {
     public ChartView(Context context, AttributeSet attrs) {
         super(context, attrs);
         chartDrawer = new ChartDrawer();
-        chartDrawer.setPaintCadence(initializePaintCadence());
         chartDrawer.setPaintSpeed(initializePaintSpeed());
         chartDrawer.setListener(this);
     }
 
-    public void invalidateChart(ArrayList<ChartPair> data) {
+    public void invalidateChart(ArrayList<Float> data) {
         chartDrawer.setData(data);
         invalidate();
     }
@@ -43,14 +40,6 @@ public class ChartView extends View implements ChartDrawer.Listener {
         paintSpeed.setColor(Color.WHITE);
         paintSpeed.setStrokeWidth(2f);
         return paintSpeed;
-    }
-
-    private Paint initializePaintCadence() {
-        Paint paintCadence = new Paint();
-        paintCadence.setAntiAlias(true);
-        paintCadence.setColor(Color.GRAY);
-        paintCadence.setStrokeWidth(2f);
-        return paintCadence;
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.btcounter;
 import android.graphics.PointF;
 
 import com.btcounter.chart.ChartDrawer;
-import com.btcounter.model.ChartPair;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -58,7 +57,7 @@ public class ChartDrawerTest {
     @Test
     public void create_point() {
 
-        PointF pointF = chartDrawer.createPoint(10, new ChartPair(20, 70), true);
+        PointF pointF = chartDrawer.createPoint(10, 20);
         assertEquals(pointF.x, 10f, 0);
         assertEquals(pointF.y, -180f, 0);
     }
@@ -71,13 +70,13 @@ public class ChartDrawerTest {
         when(listener.getViewHeight()).thenReturn(200f);
         when(listener.getViewWidth()).thenReturn(100f);
 
-        verify(chartDrawer, times(2)).drawLine(any(), any(), any(), any());
+        verify(chartDrawer, times(1)).drawLine(any(), any(), any(), any());
     }
 
-    private ArrayList<ChartPair> getMockData() {
-        ArrayList<ChartPair> data = new ArrayList<>(2);
-        data.add(new ChartPair(20, 80));
-        data.add(new ChartPair(25, 70));
+    private ArrayList<Float> getMockData() {
+        ArrayList<Float> data = new ArrayList<>(2);
+        data.add(20f);
+        data.add(25f);
         return data;
     }
 }

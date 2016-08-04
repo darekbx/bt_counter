@@ -4,8 +4,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
 
-import com.btcounter.model.ChartPair;
-
 import java.util.ArrayList;
 
 /**
@@ -20,11 +18,9 @@ public class ChartDrawer {
     }
 
     private static final float SPEED_MULTIPLER = 9;
-    private static final float CADENCE_MULTIPLER = 2;
 
-    private final ArrayList<ChartPair> data = new ArrayList<>();
+    private final ArrayList<Float> data = new ArrayList<>();
     private Paint paintSpeed;
-    private Paint paintCadence;
     private Listener listener;
 
     public void setListener(Listener listener) {
@@ -35,11 +31,7 @@ public class ChartDrawer {
         this.paintSpeed = paintSpeed;
     }
 
-    public void setPaintCadence(Paint paintCadence) {
-        this.paintCadence = paintCadence;
-    }
-
-    public void setData(ArrayList<ChartPair> chartPairs) {
+    public void setData(ArrayList<Float> chartPairs) {
         synchronized (this.data) {
             this.data.clear();
             this.data.addAll(chartPairs);
@@ -51,22 +43,17 @@ public class ChartDrawer {
             float ratio = getRatio();
             float left = 0f;
             PointF tempSpeed = null;
-            PointF tempCadence = null;
 
-            for (ChartPair pair : data) {
+            for (float value : data) {
                 if (tempSpeed == null) {
-                    tempSpeed = createPoint(left, pair, true);
-                    tempCadence = createPoint(left, pair, false);
+                    tempSpeed = createPoint(left, value);
                     continue;
                 }
 
-                PointF positionSpeed = createPoint(left, pair, true);
-                PointF positionCadence = createPoint(left, pair, false);
+                PointF positionSpeed = createPoint(left, value);
                 drawLine(canvas, tempSpeed, positionSpeed, paintSpeed);
-                drawLine(canvas, tempCadence, positionCadence, paintCadence);
 
-                tempSpeed = createPoint(left, pair, true);
-                tempCadence = createPoint(left, pair, false);
+                tempSpeed = createPoint(left, value);
 
                 left += ratio;
             }
@@ -79,11 +66,8 @@ public class ChartDrawer {
         }
     }
 
-    public PointF createPoint(float left, ChartPair pair, boolean isSpeed) {
-        return new PointF(left,
-                getYPosition(
-                        isSpeed ? pair.speed : pair.cadence,
-                        isSpeed ? SPEED_MULTIPLER : CADENCE_MULTIPLER));
+    public PointF createPoint(float left, float value) {
+        return new PointF(left, getYPosition(value, SPEED_MULTIPLER));
     }
 
     public float getRatio() {
