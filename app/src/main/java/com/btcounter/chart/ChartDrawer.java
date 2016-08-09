@@ -74,7 +74,7 @@ public class ChartDrawer {
         return listener.getViewWidth() / (float)data.size();
     }
 
-    public float getYPosition(float value, float mulipler) {
-        return listener.getViewHeight() - (value * mulipler);
+    public float getYPosition(float value, float multipler) {
+        return listener.getViewHeight() - (value * multipler);
     }
 }

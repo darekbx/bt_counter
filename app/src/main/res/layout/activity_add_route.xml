@@ -5,6 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <EditText
+        android:id="@+id/route_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textCapSentences"
+        android:hint="@string/hint_name"
+        android:layout_alignParentTop="true"
+        />
+
+
+
     <Button
         android:id="@+id/button_add"
         android:layout_width="70dp"
@@ -14,7 +25,7 @@
         android:layout_alignParentRight="true"
         />
     <EditText
-        android:id="@+id/route_distance"
+        android:id="@+id/route_point_distance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="number"
@@ -23,12 +34,12 @@
         android:layout_alignParentBottom="true"
         />
     <EditText
-        android:id="@+id/route_name"
+        android:id="@+id/route_point_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textCapSentences"
-        android:hint="@string/hint_name"
+        android:hint="@string/hint_point_name"
         android:layout_toLeftOf="@id/button_add"
-        android:layout_above="@id/route_distance"
+        android:layout_above="@id/route_point_distance"
         />
 </RelativeLayout>

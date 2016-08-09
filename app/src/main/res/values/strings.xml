@@ -23,6 +23,7 @@
 
     <string name="button_add">Add</string>
     <string name="hint_name">Name</string>
+    <string name="hint_point_name">Point name</string>
     <string name="hint_distance">Distance</string>
 
     <string name="settings_odo_key">odo_key</string>
