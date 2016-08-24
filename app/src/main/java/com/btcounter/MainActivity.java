@@ -512,10 +512,12 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
     }
 
     private void showHideDrawer(boolean show) {
-        if (show && !drawerLayout.isDrawerOpen(Gravity.RIGHT)) {
-            drawerLayout.openDrawer(Gravity.RIGHT);
-        } else if (drawerLayout.isDrawerOpen(Gravity.RIGHT)) {
-            drawerLayout.closeDrawer(Gravity.RIGHT);
+        int gravity = Gravity.RIGHT;
+        boolean isOpen = drawerLayout.isDrawerOpen(gravity);
+        if (show && !isOpen) {
+            drawerLayout.openDrawer(gravity);
+        } else if (isOpen) {
+            drawerLayout.closeDrawer(gravity);
         }
     }
 
