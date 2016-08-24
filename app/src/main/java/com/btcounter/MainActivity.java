@@ -8,7 +8,9 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,12 +49,12 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
     private MainFragment mainFragment;
     private DrawerFragment drawerFragment;
     private ChartFragment chartFragment;
+    private DrawerLayout drawerLayout;
 
     private float odo;
     private float trip;
     private float maxSpeed;
     private float speed;
-    private float cadence;
     private boolean redrawDrawer = false;
 
     @Override
@@ -70,6 +72,9 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
         loadMaxSpeed();
         loadTrip();
         keepScreenOnAndDim();
+
+        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        showHideDrawer(true);
 
         if (!isWheelSizeSettingValid()) {
             Toast.makeText(this, R.string.settings_wheel_size_invalid, Toast.LENGTH_SHORT).show();
@@ -495,7 +500,6 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
                 if (isMainFragmentActive()) {
                     runOnUiThread(() -> mainFragment.invalidateCadence(cadence));
                 }
-                MainActivity.this.cadence = cadence;
             }
 
             @Override
@@ -504,6 +508,15 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
             }
         });
         chartLogic.startListening();
+        showHideDrawer(false);
+    }
+
+    private void showHideDrawer(boolean show) {
+        if (show && !drawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+            drawerLayout.openDrawer(Gravity.RIGHT);
+        } else if (drawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+            drawerLayout.closeDrawer(Gravity.RIGHT);
+        }
     }
 
     @Override
