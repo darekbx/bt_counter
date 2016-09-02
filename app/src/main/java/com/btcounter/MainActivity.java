@@ -22,9 +22,12 @@ import com.btcounter.bt.BluetoothController;
 import com.btcounter.fragments.ChartFragment;
 import com.btcounter.fragments.DrawerFragment;
 import com.btcounter.fragments.MainFragment;
+import com.btcounter.fragments.WeatherConditionsFragment;
+import com.btcounter.model.WeatherConditions;
 import com.btcounter.settings.SettingsManager;
 import com.btcounter.utils.PermissionHelper;
 import com.btcounter.utils.TimeUtils;
+import com.btcounter.weather.WeatherConditionsController;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -34,7 +37,7 @@ import static com.btcounter.bt.BluetoothController.DATA_CADENCE;
 /**
  * Created by daba on 2016-06-01.
  */
-public class MainActivity extends AppCompatActivity implements ChartController.Listener {
+public class MainActivity extends AppCompatActivity implements ChartController.Listener, WeatherConditionsController.Listener {
 
     private static final String TAG = MainActivity.class.getName();
     private static final int SETTINGS_REQUEST = 1;
@@ -44,11 +47,13 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
     private BluetoothController bluetoothController;
     private MeasurementController measurementController;
     private ChartController chartLogic;
+    private WeatherConditionsController weatherConditionsController;
     private PowerManager.WakeLock wakeLock;
 
     private MainFragment mainFragment;
     private DrawerFragment drawerFragment;
     private ChartFragment chartFragment;
+    private WeatherConditionsFragment weatherConditionsFragment;
     private DrawerLayout drawerLayout;
 
     private float odo;
@@ -64,8 +69,10 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
         addMainFragment();
         addDrawerFragment();
         addChartFragment();
+        addWeatherConditionsFragment();
         initializeSettingsManager();
         initializeChartLogic();
+        initializeWeatherController();
         resetSpeedText();
         checkPermissions();
         loadOdo();
@@ -129,6 +136,10 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
         if (chartLogic != null) {
             chartLogic.stopListening();
             chartLogic.setListener(null);
+        }
+        if (weatherConditionsController != null) {
+            weatherConditionsController.stop();
+            weatherConditionsController.setListener(null);
         }
         saveOdo();
         saveDistance();
@@ -194,6 +205,11 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
         showConfirmExitDialog();
     }
 
+    private void initializeWeatherController() {
+        weatherConditionsController = new WeatherConditionsController(this);
+        weatherConditionsController.schedule();
+    }
+
     private void initializeChartLogic() {
         chartLogic = new ChartController();
         chartLogic.setListener(this);
@@ -226,6 +242,7 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
             invalidateMaxSpeed();
             invalidateAverageSpeed(0);
             invalidateDistance(0);
+            weatherConditionsController.refreshWeatherConditions();
         }
     }
 
@@ -258,6 +275,14 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.chart_frame, chartFragment)
+                .commit();
+    }
+
+    private void addWeatherConditionsFragment() {
+        weatherConditionsFragment = new WeatherConditionsFragment();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.weather_conditions_frame, weatherConditionsFragment)
                 .commit();
     }
 
@@ -295,6 +320,10 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
 
     private boolean isChartFragmentActive() {
         return chartFragment != null && chartFragment.isAdded();
+    }
+
+    private boolean isWeatherConditionsFragmentActive() {
+        return weatherConditionsFragment != null && weatherConditionsFragment.isAdded();
     }
 
     private void openSettings() {
@@ -530,6 +559,13 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
     public void onData(ArrayList<Float> data) {
         if (isChartFragmentActive()) {
             runOnUiThread(() -> chartFragment.notifyData(data));
+        }
+    }
+
+    @Override
+    public void onData(WeatherConditions weatherConditions) {
+        if (isWeatherConditionsFragmentActive()) {
+            runOnUiThread(() -> weatherConditionsFragment.notifyData(weatherConditions));
         }
     }
 }

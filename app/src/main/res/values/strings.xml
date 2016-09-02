@@ -20,6 +20,7 @@
     <string name="average_speed">Avg speed</string>
     <string name="max_speed">Max speed</string>
     <string name="session_time">Session time: </string>
+    <string name="weather_conditions_format" formatted="false">%.1f° (%.1f°), %.1fhPa, %d%%</string>
 
     <string name="button_add">Add</string>
     <string name="hint_name">Name</string>

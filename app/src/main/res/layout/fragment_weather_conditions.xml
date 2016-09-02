@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.btcounter.utils.FontTextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/weather_conditions_text"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/cadence_text"
+    android:layout_alignParentLeft="true"
+    android:layout_marginTop="0dp"
+    android:gravity="center"
+    android:textSize="27sp"
+    style="@style/small_text"
+    />
