@@ -20,6 +20,7 @@ public class ChartView extends View implements ChartDrawer.Listener {
         super(context, attrs);
         chartDrawer = new ChartDrawer();
         chartDrawer.setPaintSpeed(initializePaintSpeed());
+        chartDrawer.setPaintStop(initializePaintStop());
         chartDrawer.setListener(this);
     }
 
@@ -40,6 +41,15 @@ public class ChartView extends View implements ChartDrawer.Listener {
         paintSpeed.setColor(Color.WHITE);
         paintSpeed.setStrokeWidth(2f);
         return paintSpeed;
+    }
+
+    private Paint initializePaintStop() {
+        Paint paintStop = new Paint();
+        paintStop.setAntiAlias(true);
+        paintStop.setColor(Color.YELLOW);
+        paintStop.setStrokeWidth(2f);
+        paintStop.setTextSize(20);
+        return paintStop;
     }
 
     @Override

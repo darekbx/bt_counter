@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
     private SettingsManager settingsManager;
     private BluetoothController bluetoothController;
     private MeasurementController measurementController;
-    private ChartController chartLogic;
+    private ChartController chartController;
     private WeatherConditionsController weatherConditionsController;
     private PowerManager.WakeLock wakeLock;
 
@@ -133,9 +133,9 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
             measurementController.unsubscribe();
             measurementController.setListener(null);
         }
-        if (chartLogic != null) {
-            chartLogic.stopListening();
-            chartLogic.setListener(null);
+        if (chartController != null) {
+            chartController.stopListening();
+            chartController.setListener(null);
         }
         if (weatherConditionsController != null) {
             weatherConditionsController.stop();
@@ -211,8 +211,8 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
     }
 
     private void initializeChartLogic() {
-        chartLogic = new ChartController();
-        chartLogic.setListener(this);
+        chartController = new ChartController();
+        chartController.setListener(this);
     }
 
     private void resetTripDistance() {
@@ -247,8 +247,17 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
     }
 
     private void showConfirmExitDialog() {
+        String message = "";
+        if (measurementController != null) {
+            message += getString(R.string.summary_text,
+                    getString(R.string.distance_format, measurementController.getDistance()),
+                    TimeUtils.extractTime(chartController.getSummary()),
+                    TimeUtils.extractTime(chartController.getStopSummary()));
+        }
+        message += getString(R.string.confirm_exit_title);
+
         new AlertDialog.Builder(this)
-                .setMessage(R.string.confirm_exit_title)
+                .setMessage(message)
                 .setPositiveButton(R.string.yes, (DialogInterface dialog, int which) -> super.onBackPressed())
                 .setNegativeButton(R.string.no, null)
                 .show();
@@ -434,7 +443,7 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
 
     // Debug button
     public void onTickClick(View view) {
-        measurementController.notifyWheelRotationTime(new Random().nextInt(800) + 100);
+        measurementController.notifyWheelRotationTime(new Random().nextInt(800) + 300);
     }
 
     // Debug button
@@ -451,8 +460,8 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
             bluetoothController.stopScanByUser();
             bluetoothController.closeGatt();
         }
-        if (chartLogic != null) {
-            chartLogic.stopListening();
+        if (chartController != null) {
+            chartController.stopListening();
         }
         if (measurementController != null) {
             measurementController.unsubscribe();
@@ -536,7 +545,7 @@ public class MainActivity extends AppCompatActivity implements ChartController.L
                 invalidateTime(time);
             }
         });
-        chartLogic.startListening();
+        chartController.startListening();
         showHideDrawer(false);
     }
 

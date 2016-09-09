@@ -18,9 +18,12 @@ public class ChartDrawer {
     }
 
     private static final float SPEED_MULTIPLER = 9;
+    private static final int STOP_TOP_PADDING = 5;
+    private static final int STOP_HEIGHT = 40;
 
-    private final ArrayList<Float> data = new ArrayList<>();
+    private ArrayList<Float> data = new ArrayList<>();
     private Paint paintSpeed;
+    private Paint paintStop;
     private Listener listener;
 
     public void setListener(Listener listener) {
@@ -31,10 +34,13 @@ public class ChartDrawer {
         this.paintSpeed = paintSpeed;
     }
 
+    public void setPaintStop(Paint paintStop) {
+        this.paintStop = paintStop;
+    }
+
     public void setData(ArrayList<Float> chartPairs) {
         synchronized (this.data) {
-            this.data.clear();
-            this.data.addAll(chartPairs);
+            this.data = chartPairs;
         }
     }
 
@@ -44,10 +50,22 @@ public class ChartDrawer {
             float left = 0f;
             PointF tempSpeed = null;
 
+            float stopStart = 0;
+            float stopEnd = 0;
+            boolean drawStop = false;
+
             for (float value : data) {
                 if (tempSpeed == null) {
                     tempSpeed = createPoint(left, value);
                     continue;
+                }
+
+                if (stopStart > 0f && value > 0f) {
+                    stopEnd = left;
+                    drawStop = true;
+                }
+                if (value == 0f && stopStart == 0f) {
+                    stopStart = left;
                 }
 
                 PointF positionSpeed = createPoint(left, value);
@@ -56,8 +74,43 @@ public class ChartDrawer {
                 tempSpeed = createPoint(left, value);
 
                 left += ratio;
+
+                if (drawStop) {
+                    drawStop(canvas, stopStart, stopEnd);
+                    stopStart = 0f;
+                    stopEnd = 0f;
+                    drawStop = false;
+                }
             }
         }
+    }
+
+    public void drawStop(Canvas canvas, float stopStart, float stopEnd) {
+        float ratio = getRatio();
+        int diff = (int) (stopEnd / ratio - stopStart / ratio);
+        float position = calculatePosition(stopStart, stopEnd);
+        float linePosition = calculateLinePosition(stopStart, stopEnd);
+
+        if (canvas != null) {
+            canvas.save();
+            canvas.rotate(90, position, STOP_TOP_PADDING);
+            canvas.drawText(diff + "s", position, STOP_TOP_PADDING, paintStop);
+            canvas.restore();
+        }
+
+        drawLine(canvas,
+                new PointF(linePosition, STOP_HEIGHT + STOP_TOP_PADDING),
+                new PointF(linePosition, listener.getViewHeight()),
+                paintStop);
+    }
+
+    public float calculatePosition(float stopStart, float stopEnd) {
+        int diff = (int) (stopEnd - stopStart);
+        return stopStart + diff / 2 - 6;
+    }
+
+    public float calculateLinePosition(float stopStart, float stopEnd) {
+        return stopStart + (stopEnd - stopStart) / 2;
     }
 
     public void drawLine(Canvas canvas, PointF a, PointF b, Paint paint) {

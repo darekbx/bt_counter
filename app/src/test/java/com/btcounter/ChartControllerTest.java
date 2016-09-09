@@ -70,4 +70,39 @@ public class ChartControllerTest {
 
         verify(listener, never()).onData(any());
     }
+
+    @Test
+    public void get_stop_summary() {
+
+        ArrayList<Float> data = initializeData();
+        chartController.setData(data);
+
+        assertEquals(chartController.getStopSummary(), 60);
+    }
+
+    @Test
+    public void get_summary() {
+
+        ArrayList<Float> data = initializeData();
+        chartController.setData(data);
+
+        assertEquals(chartController.getSummary(), 260);
+    }
+
+    private ArrayList<Float> initializeData() {
+        ArrayList<Float> data = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            data.add((float) (Math.random() * 5 + 20));
+        }
+        for (int i = 0; i < 50; i++) {
+            data.add(0f);
+        }
+        for (int i = 0; i < 100; i++) {
+            data.add((float) (Math.random() * 5 + 20));
+        }
+        for (int i = 0; i < 10; i++) {
+            data.add(0f);
+        }
+        return data;
+    }
 }

@@ -73,6 +73,29 @@ public class ChartDrawerTest {
         verify(chartDrawer, times(1)).drawLine(any(), any(), any(), any());
     }
 
+    @Test
+    public void draw_stop() {
+
+        chartDrawer.drawStop(null, 100, 200);
+
+        when(listener.getViewHeight()).thenReturn(200f);
+        when(listener.getViewWidth()).thenReturn(100f);
+
+        verify(chartDrawer, times(1)).drawLine(any(), any(), any(), any());
+        verify(chartDrawer, times(1)).calculatePosition(100, 200);
+        verify(chartDrawer, times(1)).calculateLinePosition(100, 200);
+    }
+
+    @Test
+    public void calculate_line_position() {
+        assertEquals(chartDrawer.calculateLinePosition(100, 200), 150f, 0f);
+    }
+
+    @Test
+    public void calculate_position() {
+        assertEquals(chartDrawer.calculatePosition(100, 200), 144f, 0f);
+    }
+
     private ArrayList<Float> getMockData() {
         ArrayList<Float> data = new ArrayList<>(2);
         data.add(20f);

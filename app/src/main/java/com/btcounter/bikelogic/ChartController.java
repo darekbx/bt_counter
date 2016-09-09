@@ -1,6 +1,7 @@
 package com.btcounter.bikelogic;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
@@ -41,6 +42,24 @@ public class ChartController {
 
     public void setListener(Listener listener) {
         this.listener = listener;
+    }
+
+    public int getStopSummary() {
+        int seconds = 0;
+        for (int i = 0, count = data.size(); i < count; i++) {
+            if (data.get(i) == 0f) {
+                seconds++;
+            }
+        }
+        return seconds;
+    }
+
+    public int getSummary() {
+        return data.size();
+    }
+
+    public void setData(ArrayList<Float> data) {
+        this.data = data;
     }
 
     protected void tick() {
