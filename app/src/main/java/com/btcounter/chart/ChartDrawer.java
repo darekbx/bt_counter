@@ -1,8 +1,13 @@
 package com.btcounter.chart;
 
 import android.graphics.Canvas;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.graphics.PathDashPathEffect;
 import android.graphics.PointF;
+import android.util.Log;
+
+import com.btcounter.utils.TimeUtils;
 
 import java.util.ArrayList;
 
@@ -19,7 +24,8 @@ public class ChartDrawer {
 
     private static final float SPEED_MULTIPLER = 9;
     private static final int STOP_TOP_PADDING = 5;
-    private static final int STOP_HEIGHT = 40;
+    private static final int MINIMUM_TIME = 5;
+    private static final int STOP_HEIGHT = 60;
 
     private ArrayList<Float> data = new ArrayList<>();
     private Paint paintSpeed;
@@ -50,8 +56,8 @@ public class ChartDrawer {
             float left = 0f;
             PointF tempSpeed = null;
 
-            float stopStart = 0;
-            float stopEnd = 0;
+            float stopStart = 0, stopEnd = 0;
+            int index = 0, stopTimeStart = 0, stopTimeEnd = 0;
             boolean drawStop = false;
 
             for (float value : data) {
@@ -62,10 +68,12 @@ public class ChartDrawer {
 
                 if (stopStart > 0f && value > 0f) {
                     stopEnd = left;
+                    stopTimeEnd = index;
                     drawStop = true;
                 }
                 if (value == 0f && stopStart == 0f) {
                     stopStart = left;
+                    stopTimeStart = index;
                 }
 
                 PointF positionSpeed = createPoint(left, value);
@@ -74,9 +82,10 @@ public class ChartDrawer {
                 tempSpeed = createPoint(left, value);
 
                 left += ratio;
+                index++;
 
                 if (drawStop) {
-                    drawStop(canvas, stopStart, stopEnd);
+                    drawStop(canvas, stopStart, stopEnd, stopTimeStart, stopTimeEnd);
                     stopStart = 0f;
                     stopEnd = 0f;
                     drawStop = false;
@@ -85,23 +94,24 @@ public class ChartDrawer {
         }
     }
 
-    public void drawStop(Canvas canvas, float stopStart, float stopEnd) {
-        float ratio = getRatio();
-        int diff = (int) (stopEnd / ratio - stopStart / ratio);
-        float position = calculatePosition(stopStart, stopEnd);
-        float linePosition = calculateLinePosition(stopStart, stopEnd);
+    public void drawStop(Canvas canvas, float stopStart, float stopEnd, int stopTimeStart, int stopTimeEnd) {
+        int diff = stopTimeEnd - stopTimeStart;
+        if (diff >= MINIMUM_TIME) {
+            float position = calculatePosition(stopStart, stopEnd);
+            float linePosition = calculateLinePosition(stopStart, stopEnd);
 
-        if (canvas != null) {
-            canvas.save();
-            canvas.rotate(90, position, STOP_TOP_PADDING);
-            canvas.drawText(diff + "s", position, STOP_TOP_PADDING, paintStop);
-            canvas.restore();
+            if (canvas != null) {
+                canvas.save();
+                canvas.rotate(90, position, STOP_TOP_PADDING);
+                canvas.drawText(TimeUtils.extractTime(diff), position, STOP_TOP_PADDING, paintStop);
+                canvas.restore();
+            }
+
+            drawLine(canvas,
+                    new PointF(linePosition, STOP_HEIGHT + STOP_TOP_PADDING),
+                    new PointF(linePosition, listener.getViewHeight()),
+                    paintStop);
         }
-
-        drawLine(canvas,
-                new PointF(linePosition, STOP_HEIGHT + STOP_TOP_PADDING),
-                new PointF(linePosition, listener.getViewHeight()),
-                paintStop);
     }
 
     public float calculatePosition(float stopStart, float stopEnd) {

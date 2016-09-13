@@ -3,6 +3,7 @@ package com.btcounter.chart;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
@@ -47,7 +48,6 @@ public class ChartView extends View implements ChartDrawer.Listener {
         Paint paintStop = new Paint();
         paintStop.setAntiAlias(true);
         paintStop.setColor(Color.YELLOW);
-        paintStop.setStrokeWidth(2f);
         paintStop.setTextSize(20);
         return paintStop;
     }
